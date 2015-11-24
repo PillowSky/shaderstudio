@@ -7,17 +7,19 @@ module.exports = (grunt) ->
 	require('load-grunt-tasks')(grunt)
 	reloadPort = 35729
 
-	jadeFiles =
-		'app/views/index.html': 'app/views/index.jade'
+	jadeFiles = {}
 
 	lessFiles =
 		'public/css/style.css': 'public/css/style.less'
+		'public/css/view.css': 'public/css/view.less'
 
 	coffeeFiles =
 		'public/js/script.js': 'public/js/script.coffee'
+		'public/js/view.js': 'public/js/view.coffee'
 
 	uglifyFiles =
 		'public/js/script.js': 'public/js/script.js'
+		'public/js/view.js': 'public/js/view.js'
 
 	grunt.initConfig
 		pkg:

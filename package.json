@@ -19,7 +19,8 @@
 		"glob": "5.x",
 		"ehp": "1.x",
 		"connect-multiparty": "2.x",
-		"jimp": "x"
+		"jimp": "x",
+		"mongodb": "2.x"
 	},
 	"devDependencies": {
 		"grunt": "x",

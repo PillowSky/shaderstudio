@@ -2,10 +2,7 @@
 	"name": "shaderstudio",
 	"version": "0.0.1",
 	"dependencies": {
-		"bootstrap": "3.x",
-		"seiyria-bootstrap-slider": "5.x",
-		"blueimp-tmpl": "2.x",
-		"gl-matrix": "2.x",
+		"semantic": "2.x",
 		"twgl.js": "x"
 	},
 	"ignore": [
