@@ -10,7 +10,7 @@ if process.env.RUNTIME && process.env.RUNTIME == 'BAE'
 	username = '91ffd5e7cbe44f6fb8d6bdde574fc06e'
 	password = 'd977a9f49d6f4a78a7dfde99896efaea'
 else
-	db_name = 'shader'
+	db_name = 'shaderstudio'
 	db_host = 'localhost'
 	db_port = '27017'
 

@@ -10,12 +10,12 @@ appkey = 'ftHtWH'
 shaderListUrl = 'https://www.shadertoy.com/api/v1/shaders?key=' + appkey
 shaderDetailUrl = 'https://www.shadertoy.com/api/v1/shaders/shaderID?key=' + appkey
 assetUrl = 'https://www.shadertoy.com'
-mongoUrl = 'mongodb://localhost:27017/shader'
+mongoUrl = 'mongodb://localhost:27017/shaderstudio'
 
 MongoClient.connect mongoUrl, (error, db)->
 	assert.equal(null, error);
 	console.log("Connected to #{mongoUrl}");
-	shaders = db.collection('shaders')
+	shaders = db.collection('shader')
 
 	request shaderListUrl, (error, response, body)->
 		json = JSON.parse(body)
