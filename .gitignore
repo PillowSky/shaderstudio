@@ -1,5 +1,6 @@
 node_modules
 public/components
+public/presets
 public/css/*.css
 public/js/*.js
 app/views/*.html

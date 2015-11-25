@@ -20,6 +20,7 @@
 		"ehp": "1.x",
 		"connect-multiparty": "2.x",
 		"jimp": "x",
+		"async": "1.x",
 		"mongodb": "2.x"
 	},
 	"devDependencies": {
