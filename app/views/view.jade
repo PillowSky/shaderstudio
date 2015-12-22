@@ -12,10 +12,48 @@ html
 		link(rel='icon' href='/img/favicon.ico')
 
 	body
-		canvas#canvas
+		.ui.inverted.vertical.masthead.aligned.segment
+			.ui.container
+				.ui.large.secondary.inverted.pointing.menu
+					a.toc.item
+						i.sidebar.icon
+					a.active.item Home
+					a.item Work
+					a.item Company
+					a.item Careers
+					.right.item
+						a.ui.inverted.button Log in
+						a.ui.inverted.button Sign Up
 
-		script.
-			window.inputs = !{JSON.stringify(renderpass[0].inputs)}
+			.ui.grid.container#content
+				.eight.wide.column#left
+					.row#canvasWrapper
+						canvas#canvas
+						i.backward.icon
+						span &nbsp;&nbsp;
+						i.pause.icon
+						span &nbsp;&nbsp;
+						span 0s&nbsp;&nbsp;
+						span 60FPS&nbsp;&nbsp;
+						i.maximize.icon
+					.row.note
+						h1 #{info.name}
+					.row.float-right
+						i.unhide.icon
+						span #{info.viewed}&nbsp;&nbsp;
+						i.heart.icon
+						span #{info.likes}
+					.row
+						p Tags: #{info.tags.join(', ')}
+					.row
+						p #{info.description}
+					.row
+						p Uploaded by #{info.username} on #{new Date(info.date * 1000).toDateString()}
+					br
+					br
+					.row Comments
+
+				.eight.wide.column#right
 
 		script#vs(type='x-shader/x-vertex')
 			include pass.vert
@@ -23,7 +61,8 @@ html
 			include head.frag
 			!{renderpass[0].code}
 			include foot.frag
-
+		script.
+			window.inputs = !{JSON.stringify(renderpass[0].inputs)}
 
 		script(src='/components/jquery/dist/jquery.min.js')
 		script(src='/components/semantic/dist/semantic.min.js')
