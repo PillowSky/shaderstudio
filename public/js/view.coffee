@@ -69,6 +69,10 @@ $ ->
 			x = event.pageX - offset.left
 			y = event.pageY - offset.top
 
+	editor = ace.edit("editor");
+	editor.setTheme("ace/theme/twilight");
+	editor.session.setMode("ace/mode/glsl");
+
 	today = new Date()
 	year = today.getFullYear()
 	month = today.getMonth()
