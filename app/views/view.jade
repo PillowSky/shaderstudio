@@ -63,7 +63,7 @@ html
 			include head.frag
 			!{renderpass[0].code}
 			include foot.frag
-		script.
+		script.input
 			window.inputs = !{JSON.stringify(renderpass[0].inputs)}
 
 		script(src='/components/jquery/dist/jquery.min.js')

@@ -5,7 +5,7 @@ shader = require('../models/shader')
 module.exports = (app) ->
 	app.get '/view/:shaderID', (req, res) ->
 		shaderID = req.params.shaderID
-		shader.query shaderID, (error, doc)->
+		shader.findID shaderID, (error, doc)->
 			if doc
 				res.render('view', doc.Shader)
 			else

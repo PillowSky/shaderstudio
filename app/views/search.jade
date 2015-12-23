@@ -1,0 +1,52 @@
+doctype html
+html
+	head
+		meta(charset='UTF-8')
+		meta(http-equiv='X-UA-Compatible' content='IE=edge, chrome=1')
+		meta(name='description' content='ShaderStudio - Search')
+		meta(name='renderer' content='webkit')
+		meta(name='viewport' content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no')
+		title ShaderStudio - Search
+		link(rel='stylesheet', href='/components/semantic/dist/semantic.min.css')
+		link(rel='stylesheet', href='/css/search.css')
+		link(rel='icon' href='/img/favicon.ico')
+		script.
+			window.inputs = []
+	body
+		.ui.inverted.vertical.masthead.aligned.segment
+			.ui.container
+				.ui.large.secondary.inverted.pointing.menu
+					a.toc.item
+						i.sidebar.icon
+					a.active.item Home
+					a.item Work
+					a.item Company
+					a.item Careers
+					.right.item
+						a.ui.inverted.button Log in
+						a.ui.inverted.button Sign Up
+
+			.ui.container#content
+				.ui.four.column.grid
+					each shader, index in shaders
+						.four.wide.column.scene
+							canvas.canvas
+							script(id ="fs#{index}" type='x-shader/x-fragment')
+								include head.frag
+								!{shader.renderpass[0].code}
+								include foot.frag
+							script.input.
+								window.inputs[#{index}] = !{JSON.stringify(shader.renderpass[0].inputs)}
+							p "#{shader.info.name}" by #{shader.info.username}
+							i.unhide.icon
+							span #{shader.info.viewed}&nbsp;&nbsp;
+							i.heart.icon
+							span #{shader.info.likes}
+
+		script#vs(type='x-shader/x-vertex')
+			include pass.vert
+
+		script(src='/components/jquery/dist/jquery.min.js')
+		script(src='/components/semantic/dist/semantic.min.js')
+		script(src='/components/twgl.js/dist/twgl.min.js')
+		script(src='/js/search.js')

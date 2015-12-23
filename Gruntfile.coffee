@@ -10,15 +10,15 @@ module.exports = (grunt) ->
 	jadeFiles = {}
 
 	lessFiles =
-		'public/css/style.css': 'public/css/style.less'
+		'public/css/search.css': 'public/css/search.less'
 		'public/css/view.css': 'public/css/view.less'
 
 	coffeeFiles =
-		'public/js/script.js': 'public/js/script.coffee'
+		'public/js/search.js': 'public/js/search.coffee'
 		'public/js/view.js': 'public/js/view.coffee'
 
 	uglifyFiles =
-		'public/js/script.js': 'public/js/script.js'
+		'public/js/search.js': 'public/js/search.js'
 		'public/js/view.js': 'public/js/view.js'
 
 	grunt.initConfig
