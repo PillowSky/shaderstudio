@@ -10,14 +10,17 @@ module.exports = (grunt) ->
 	jadeFiles = {}
 
 	lessFiles =
+		'public/css/index.css': 'public/css/index.less'
 		'public/css/search.css': 'public/css/search.less'
 		'public/css/view.css': 'public/css/view.less'
 
 	coffeeFiles =
+		'public/js/index.js': 'public/js/index.coffee'
 		'public/js/search.js': 'public/js/search.coffee'
 		'public/js/view.js': 'public/js/view.coffee'
 
 	uglifyFiles =
+		'public/js/index.js': 'public/js/index.js'
 		'public/js/search.js': 'public/js/search.js'
 		'public/js/view.js': 'public/js/view.js'
 
