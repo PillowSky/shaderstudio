@@ -10,6 +10,7 @@ module.exports = (grunt) ->
 	jadeFiles = {}
 
 	lessFiles =
+		'public/css/common.css': 'public/css/common.less'
 		'public/css/index.css': 'public/css/index.less'
 		'public/css/search.css': 'public/css/search.less'
 		'public/css/view.css': 'public/css/view.less'
