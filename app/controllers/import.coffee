@@ -1,8 +1,8 @@
-mongo = require('../services/mongo')
+mongoose = require('../services/mongoose')
 
 module.exports = (app) ->
 	app.post '/import', (req, res) ->
-		mongo.collection('preset').insert req.body, (error)->
+		mongoose.collection('preset').insert req.body, (error)->
 			if error
 				res.status(403).json(error)
 			else
