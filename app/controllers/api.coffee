@@ -13,3 +13,10 @@ module.exports = (app) ->
 			return next(new Error(error)) if error
 			return next(doc) if not doc
 			res.json(doc)
+
+
+	app.get '/api/shaders/query/:queryString', (req, res, next)->
+		Shader.query req.params.queryString, (error, docs)->
+			return next(new Error(error)) if error
+			return next(docs) if not docs
+			res.json(docs)

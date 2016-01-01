@@ -63,4 +63,7 @@ ShaderSchema.statics.allId = (callback)->
 		callback error, docs.map (doc)->
 			doc.info.id
 
+ShaderSchema.statics.query = (queryString, callback)->
+	@find({'info.name': {$regex: queryString}}, callback)
+
 module.exports = mongoose.model('Shader', ShaderSchema)

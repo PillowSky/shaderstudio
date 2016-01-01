@@ -64,7 +64,7 @@ html
 							.results
 						.right.item
 							a.ui.inverted.button Login
-				canvas.home
+				canvas#home
 				.ui.text.container
 					h1.ui.inverted.header.VisbyRoundCF Shader Studio
 					h2.VisbyRoundCF Browse, create and share shader online!
@@ -72,38 +72,46 @@ html
 						| Browse the gallery
 						i.right.arrow.icon
 
+				.ui.icon.buttons.toolkit
+					button.ui.icon.inverted.button.share
+						i.share.alternate.icon
+					button.ui.icon.inverted.button.left
+						i.left.chevron.icon
+					button.ui.icon.inverted.button.pause
+						i.pause.icon
+					button.ui.icon.inverted.button.right
+						i.right.chevron.icon
+
 			.ui.vertical.stripe.segment
 				.ui.middle.aligned.stackable.grid.container
 					.row
 						.eight.wide.column
-							h3.ui.header We Help Companies and Companions
-							p
-								| We can give your company superpowers to do things that they never thought possible. Let us delight your customers and empower your needs...through pure data analytics.
-							h3.ui.header We Make Bananas That Can Dance
-							p
-								| Yes that's right, you thought it was the stuff of dreams, but even bananas can be bioengineered.
+							h3.ui.header We Help Making a Better Web
+							p Shader give developers superpowers to do things that they never thought possible.
+							h3.ui.header We Make Developers Happier
+							p Shader are powerful but hard to write, but now with ShaderStudio you have wonderful tools to boost the productivity.
 						.six.wide.right.floated.column
 							img.ui.large.bordered.rounded.image(src='/img/white-image.png')
 					.row
 						.center.aligned.column
-							a.ui.huge.button Check Them Out
+							a.ui.huge.teal.animated.button
+								.visible.content Create a Shader
+								.hidden.content
+									| Now&nbsp;
+									i.right.arrow.icon
 			.ui.vertical.stripe.quote.segment
 				.ui.equal.width.stackable.internally.celled.grid
 					.center.aligned.row
 						.column
-							h3 "What a Company"
-							p That is what they all say about us
+							h3 "Are you going to rock Siggraph?"
+							p You probably want to share it on ShaderStudio.
 						.column
-							h3 "I shouldn't have gone with their competitor."
-							p
-								img.ui.avatar.image(src='/img/nan.jpg')
-								b Nan
-								|  Chief Fun Officer Acme Toys
+							h3 "That's the reason I get up."
+							p Won't you need inspiration to start your morning in the office?
 			.ui.vertical.stripe.segment
 				.ui.text.container
-					h3.ui.header Breaking The Grid, Grabs Your Attention
-					p
-						| Instead of focusing on content creation and hard work, we have learned how to master the art of doing nothing by providing massive amounts of whitespace and generic content that can seem massive, monolithic and worth your attention.
+					h3.ui.header Push pixels from code to screen
+					p It has been rebuilt in order to provide the computer graphics developers and hobbyists with a great platform to prototype, experiment, teach, learn, inspire and share their creations with the community. On the other, the expressiveness of the shaders has arisen by allowing different types of inputs such as video, webcam or sound.
 					a.ui.large.button Read More
 					h4.ui.horizontal.header.divider
 						a(href='#') Case Studies
@@ -133,16 +141,15 @@ html
 							p
 								| Extra space for a call to action inside the footer that could help re-engage users.
 
-		script#vs(type='x-shader/x-vertex')
-			include pass.vert
+		script#pass(type='x-shader/x-vertex')
+			include glsl/pass.vert
 
-		script#fs(type='x-shader/x-fragment')
-			include head.frag
-			!{renderpass[0].code}
-			include foot.frag
+		script#head(type='x-shader/x-fragment')
+			include glsl/head.frag
 
-		script.input.
-			window.inputs = []
+		script.
+			window.shader = !{JSON.stringify(shader)}
+			window.config = !{JSON.stringify(config)}
 
 		script(src='/components/jquery/dist/jquery.min.js')
 		script(src='/components/semantic/dist/semantic.min.js')

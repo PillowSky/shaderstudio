@@ -32,9 +32,9 @@ html
 						.four.wide.column.scene
 							canvas.canvas
 							script(id ="fs#{index}" type='x-shader/x-fragment')
-								include head.frag
+								include glsl/head.frag
 								!{shader.renderpass[0].code}
-								include foot.frag
+								include glsl/foot.frag
 							script.input.
 								window.inputs[#{index}] = !{JSON.stringify(shader.renderpass[0].inputs)}
 							p "#{shader.info.name}" by #{shader.info.username}
@@ -44,7 +44,7 @@ html
 							span #{shader.info.likes}
 
 		script#vs(type='x-shader/x-vertex')
-			include pass.vert
+			include glsl/pass.vert
 
 		script(src='/components/jquery/dist/jquery.min.js')
 		script(src='/components/semantic/dist/semantic.min.js')

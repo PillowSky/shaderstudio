@@ -11,8 +11,8 @@ if process.env.RUNTIME && process.env.RUNTIME == 'BAE'
 	mongoose.connect("mongodb://#{db_username}:#{db_password}@#{db_host}:#{db_port}/#{db_name}")
 
 else
-	db_name = 'shaderstudio'
 	db_host = 'localhost'
+	db_name = 'shaderstudio'
 	mongoose.connect("mongodb://#{db_host}/#{db_name}")
 
 module.exports = mongoose

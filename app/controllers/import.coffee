@@ -1,3 +1,5 @@
+'use strict'
+
 mongoose = require('../services/mongoose')
 
 module.exports = (app) ->

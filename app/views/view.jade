@@ -58,16 +58,16 @@ html
 						!{renderpass[0].code}
 
 		script#vs(type='x-shader/x-vertex')
-			include pass.vert
+			include glsl/pass.vert
 		script#fs(type='x-shader/x-fragment')
-			include head.frag
+			include glsl/head.frag
 			!{renderpass[0].code}
-			include foot.frag
+			include glsl/foot.frag
 		script.input.
 			window.inputs = !{JSON.stringify(renderpass[0].inputs)}
 
 		script(src='/components/jquery/dist/jquery.min.js')
 		script(src='/components/semantic/dist/semantic.min.js')
-		script(src='/components/twgl.js/dist/twgl.min.js')
+		script(src='/components/twgl.js/dist/twgl.js')
 		script(src='/components/ace-builds/src-min/ace.js')
 		script(src='/js/view.js')

@@ -1,12 +1,15 @@
 'use strict'
 
+Config = require('../models/config')
 Shader = require('../models/shader')
 
 module.exports = (app) ->
-	app.get '/', (req, res) ->
-		shaderId = 'XstGR8'
-		Shader.findByShaderId shaderID, (error, doc)->
-			if doc
-				res.render('index', doc)
-			else
-				res.status(404).render('404')
+	app.get '/', (req, res, next) ->
+		ids = Config.config['home.shaders']
+		shaderId = ids[Math.floor(Math.random() * ids.length)]
+
+		Shader.findByShaderId shaderId, (error, doc)->
+			return next(new Error(error)) if error
+			return next(doc) if not doc
+
+			res.render('index', {'shader': doc, 'config': Config.config})
