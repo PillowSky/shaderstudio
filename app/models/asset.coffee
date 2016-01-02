@@ -4,7 +4,9 @@ mongoose = require('../services/mongoose')
 
 AssetSchema = new mongoose.Schema({
 	_id: mongoose.Schema.ObjectId
-	path: String
+	id: Number
+	type: String
+	src: mongoose.Schema.Types.Mixed
 })
 
 module.exports = mongoose.model('Asset', AssetSchema)

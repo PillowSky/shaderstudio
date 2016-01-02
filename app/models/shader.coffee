@@ -26,7 +26,7 @@ SamplerSchema = new mongoose.Schema({
 
 InputSchema = new mongoose.Schema({
 	id: Number
-	src: String
+	src: mongoose.Schema.Types.Mixed
 	ctype: String
 	channel: Number
 	sampler: SamplerSchema

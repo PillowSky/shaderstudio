@@ -12,14 +12,13 @@ $ ->
 	$('.ui.sidebar').sidebar 'attach events', '.toc.item'
 	$('.ui.search').search()
 
-
 	gl = twgl.getWebGLContext(document.querySelector('#home'))
 
 	imagePass = null
 	imagePassTexturesConfig = {}
 	imagePassChannelResolution = new Float32Array(12)
-	soundPass = null
 
+	#TODO: soundPass
 	for pass in window.shader.renderpass
 		switch pass.type
 			when 'image'
@@ -27,19 +26,24 @@ $ ->
 					console.log("Pass ignored: #{pass.type}", pass)
 				else
 					imagePass = pass
-			when 'sound'
-				if soundPass
-					console.log("Pass ignored: #{pass.type}", pass)
-				else
-					soundPass = pass
 			else
 				console.log("Pass ignored: #{pass.type}", pass)
 
+	#TODO: imagePass: music, video, webcam, mic, keyboard
+	#TODO: soundPass: texture
+	headCode = $('#head').text()
 	imagePass.inputs.forEach (input)->
 		switch input.ctype
-			when 'texture'
-				textureConfig =
-					'src': window.config['asset.host'] + input.src
+			when 'texture', 'cubemap'
+				textureConfig = {}
+
+				if input.ctype == 'texture'
+					textureConfig.src = window.config['asset.host'] + input.src
+				else
+					headCode = headCode.replace("sampler2D #{'iChannel' + input.channel}", "samplerCube #{'iChannel' + input.channel}")
+					textureConfig.target = gl.TEXTURE_CUBE_MAP
+					textureConfig.src = input.src.map (src)->
+						window.config['asset.host'] + src
 
 				switch input.sampler.filter
 					when 'nearest'
@@ -67,7 +71,7 @@ $ ->
 					else
 						console.log("Unexpected vflip: #{input.sampler.vflip}", input)
 
-				imagePassTexturesConfig['ichannel' + input.channel] = textureConfig
+				imagePassTexturesConfig['iChannel' + input.channel] = textureConfig
 			else
 				console.log("Input ignored: #{input.ctype}", input)
 
@@ -77,15 +81,15 @@ $ ->
 		else
 			imagePass.inputs.forEach (input)->
 				switch input.ctype
-					when 'texture'
-						imagePassChannelResolution[input.channel * 3] = imgs['ichannel' + input.channel].width
-						imagePassChannelResolution[input.channel * 3 + 1] = imgs['ichannel' + input.channel].height
+					when 'texture', 'cubemap'
+						imagePassChannelResolution[input.channel * 3] = imgs['iChannel' + input.channel].width
+						imagePassChannelResolution[input.channel * 3 + 1] = imgs['iChannel' + input.channel].height
 					else
 						console.log("Input ignored again: #{input.ctype}", input)
 
-	programInfo = twgl.createProgramInfo(gl, ['pass', $('#head').text() + imagePass.code])
+	programInfo = twgl.createProgramInfo(gl, ['pass', headCode + imagePass.code])
 
-	arrays = {
+	bufferInfo = twgl.createBufferInfoFromArrays(gl, {
 		position: {
 			numComponents: 2,
 			data: [
@@ -95,51 +99,45 @@ $ ->
 				-1.0, -1.0
 			]
 		}
-	}
+	})
 
-	bufferInfo = twgl.createBufferInfoFromArrays(gl, arrays)
-
-	x = 0
-	y = 0
-	down = false
+	mouse = new Float32Array(4)
 	$('#home').mousedown ->
-		down = true;
+		base = $(this).offset()
+		mouse[2] = event.pageX - base.left
+		mouse[3] = event.pageY - base.top
+
+		$(this).mousemove (event)->
+			offset = $(this).offset()
+			mouse[0] = event.pageX - offset.left
+			mouse[1] = event.pageY - offset.top
 
 	$('#home').mouseup ->
-		down = false;
-
-	$('#home').mousemove (event)->
-		if down
-			offset = $(this).offset()
-			x = event.pageX - offset.left
-			y = event.pageY - offset.top
-
-	today = new Date()
-	year = today.getFullYear()
-	month = today.getMonth()
-	day = today.getDay()
+		$(this).unbind('mousemove')
 
 	render = (time)->
 		twgl.resizeCanvasToDisplaySize(gl.canvas);
 		gl.viewport(0, 0, gl.canvas.width, gl.canvas.height)
 
+		#TODO: iChannelTime
+		d = new Date()
 		uniforms =
 			iResolution: [gl.canvas.width, gl.canvas.height, 0]
 			iGlobalTime: time / 1000
 			iChannelTime: [0, 0, 0, 0]
 			iChannelResolution: imagePassChannelResolution
-			iMouse: [x, y, 0, 0]
-			iDate: [year, month, day, time / 1000]
+			iMouse: mouse
+			iDate: [d.getFullYear(), d.getMonth(), d.getDate(), d.getHours()*3600 + d.getMinutes()*60 + d.getSeconds() + d.getMilliseconds()/1000]
 			iSampleRate: 441000
 
-		for name in imagePassTextures
-			uniforms[name] = imagePassTextures[name]
+		for channelName in imagePassTextures
+			uniforms[channelName] = imagePassTextures[channelName]
 
-		gl.useProgram(programInfo.program)
-		twgl.setBuffersAndAttributes(gl, programInfo, bufferInfo)
 		twgl.setUniforms(programInfo, uniforms)
 		twgl.drawBufferInfo(gl, gl.TRIANGLE_STRIP, bufferInfo)
 
 		requestAnimationFrame(render)
 
+	gl.useProgram(programInfo.program)
+	twgl.setBuffersAndAttributes(gl, programInfo, bufferInfo)
 	requestAnimationFrame(render)
