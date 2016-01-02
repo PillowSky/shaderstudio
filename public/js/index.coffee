@@ -15,6 +15,7 @@ $ ->
 	gl = twgl.getWebGLContext(document.querySelector('#home'))
 
 	imagePass = null
+	imagePassTextures = {}
 	imagePassTexturesConfig = {}
 	imagePassChannelResolution = new Float32Array(12)
 
@@ -51,7 +52,7 @@ $ ->
 					when 'linear'
 						textureConfig.filter = gl.LINEAR
 					when 'mipmap'
-						textureConfig.filter = gl.LINEAR_MIPMAP_LINEAR
+						textureConfig.filter = gl.LINEAR_MIPMAP_NEAREST
 					else
 						console.log("Unexpected filter: #{input.sampler.filter}", input)
 
@@ -72,6 +73,43 @@ $ ->
 						console.log("Unexpected vflip: #{input.sampler.vflip}", input)
 
 				imagePassTexturesConfig['iChannel' + input.channel] = textureConfig
+
+			when 'music'
+				audio = new Audio()
+				audio.src = window.config['asset.host'] + input.src
+				audio.autoplay = true
+				audio.loop = true
+
+				context = new AudioContext()
+				source = context.createMediaElementSource(audio)
+				analyser = context.createAnalyser()
+				gain = context.createGain()
+
+				#NOTE: Only low frequency component(lower half) is taken, the next line should be commented
+				#analyser.fftSize = 1024
+
+				source.connect(analyser)
+				analyser.connect(gain)
+				gain.connect(context.destination)
+
+				buffer = new ArrayBuffer(1024)
+				freq = new Uint8Array(buffer, 0, 512)
+				wave = new Uint8Array(buffer, 512, 512)
+
+				textureConfig =
+					filter: gl.LINEAR
+					wrap: gl.CLAMP_TO_EDGE
+					format: gl.LUMINANCE
+					src: new Uint8Array(buffer)
+					width: 512
+					height: 2
+					update: ->
+						analyser.getByteFrequencyData(freq)
+						analyser.getByteTimeDomainData(wave)
+						imagePassTextures['iChannel' + input.channel] = twgl.createTexture(gl, textureConfig)
+
+				textureConfig.update()
+				imagePassTexturesConfig['iChannel' + input.channel] = textureConfig
 			else
 				console.log("Input ignored: #{input.ctype}", input)
 
@@ -84,11 +122,13 @@ $ ->
 					when 'texture', 'cubemap'
 						imagePassChannelResolution[input.channel * 3] = imgs['iChannel' + input.channel].width
 						imagePassChannelResolution[input.channel * 3 + 1] = imgs['iChannel' + input.channel].height
+					when 'music'
+						imagePassChannelResolution[input.channel * 3] = 512
+						imagePassChannelResolution[input.channel * 3 + 1] = 2
 					else
 						console.log("Input ignored again: #{input.ctype}", input)
 
 	programInfo = twgl.createProgramInfo(gl, ['pass', headCode + imagePass.code])
-
 	bufferInfo = twgl.createBufferInfoFromArrays(gl, {
 		position: {
 			numComponents: 2,
@@ -130,13 +170,17 @@ $ ->
 			iDate: [d.getFullYear(), d.getMonth(), d.getDate(), d.getHours()*3600 + d.getMinutes()*60 + d.getSeconds() + d.getMilliseconds()/1000]
 			iSampleRate: 441000
 
-		for channelName in imagePassTextures
-			uniforms[channelName] = imagePassTextures[channelName]
+		for channel, texture of imagePassTextures
+			uniforms[channel] = texture
 
 		twgl.setUniforms(programInfo, uniforms)
 		twgl.drawBufferInfo(gl, gl.TRIANGLE_STRIP, bufferInfo)
 
 		requestAnimationFrame(render)
+
+		# All done, update inputs
+		for channel, config of imagePassTexturesConfig
+			config.update() if config.update
 
 	gl.useProgram(programInfo.program)
 	twgl.setBuffersAndAttributes(gl, programInfo, bufferInfo)
