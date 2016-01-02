@@ -30,7 +30,7 @@ $ ->
 			else
 				console.log("Pass ignored: #{pass.type}", pass)
 
-	#TODO: imagePass: music, video, webcam, mic, keyboard
+	#TODO: imagePass: video, webcam, keyboard
 	#TODO: soundPass: texture
 	headCode = $('#head').text()
 	imagePass.inputs.forEach (input)->
@@ -74,23 +74,30 @@ $ ->
 
 				imagePassTexturesConfig['iChannel' + input.channel] = textureConfig
 
-			when 'music'
-				audio = new Audio()
-				audio.src = window.config['asset.host'] + input.src
-				audio.autoplay = true
-				audio.loop = true
-
+			when 'music', 'mic'
 				context = new AudioContext()
-				source = context.createMediaElementSource(audio)
 				analyser = context.createAnalyser()
 				gain = context.createGain()
 
 				#NOTE: Only low frequency component(lower half) is taken, the next line should be commented
 				#analyser.fftSize = 1024
-
-				source.connect(analyser)
 				analyser.connect(gain)
 				gain.connect(context.destination)
+
+				if input.ctype == 'music'
+					audio = new Audio()
+					audio.src = window.config['asset.host'] + input.src
+					audio.autoplay = true
+					audio.loop = true
+					source = context.createMediaElementSource(audio)
+					source.connect(analyser)
+				else
+					navigator.getUserMedia = navigator.getUserMedia or navigator.webkitGetUserMedia or navigator.mozGetUserMedia or navigator.msGetUserMedia
+					navigator.getUserMedia {audio: true}, (stream)->
+						source = context.createMediaStreamSource(stream)
+						source.connect(analyser)
+					, (error)->
+						console.error(error) if error
 
 				buffer = new ArrayBuffer(1024)
 				freq = new Uint8Array(buffer, 0, 512)
@@ -122,7 +129,7 @@ $ ->
 					when 'texture', 'cubemap'
 						imagePassChannelResolution[input.channel * 3] = imgs['iChannel' + input.channel].width
 						imagePassChannelResolution[input.channel * 3 + 1] = imgs['iChannel' + input.channel].height
-					when 'music'
+					when 'music', 'mic'
 						imagePassChannelResolution[input.channel * 3] = 512
 						imagePassChannelResolution[input.channel * 3 + 1] = 2
 					else
