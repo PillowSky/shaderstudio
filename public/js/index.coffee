@@ -47,9 +47,10 @@ $ ->
 	gl = twgl.getWebGLContext(document.querySelector('#home'))
 
 	imagePass = null
-	imagePassTextures = {}
-	imagePassTexturesConfig = {}
+	imagePassTextures = new Array(4)
+	imagePassTexturesConfig = new Array(4)
 	imagePassChannelResolution = new Float32Array(12)
+	imagePassChannelTime = new Float32Array(4)
 
 	#TODO: soundPass
 	for pass in window.shader.renderpass
@@ -78,9 +79,10 @@ $ ->
 						window.config['asset.host'] + src
 
 				samplerToConfig(input.sampler, textureConfig)
-				imagePassTexturesConfig['iChannel' + input.channel] = textureConfig
+				imagePassTexturesConfig[input.channel] = textureConfig
 			when 'music', 'mic'
 				context = new AudioContext()
+				source = null
 				analyser = context.createAnalyser()
 				gain = context.createGain()
 
@@ -98,6 +100,7 @@ $ ->
 					source.connect(analyser)
 				else
 					navigator.getUserMedia {audio: true}, (stream)->
+						#URL.createObjectURL(stream) failed due to Chrome implementation limits
 						source = context.createMediaStreamSource(stream)
 						source.connect(analyser)
 					, (error)->
@@ -117,10 +120,12 @@ $ ->
 					update: ->
 						analyser.getByteFrequencyData(freq)
 						analyser.getByteTimeDomainData(wave)
-						imagePassTextures['iChannel' + input.channel] = twgl.createTexture(gl, textureConfig)
+						imagePassTextures[input.channel] = twgl.createTexture(gl, textureConfig)
+						#double check here due to Chrome implementation limits
+						imagePassChannelTime[input.channel] = source.mediaElement.currentTime if source and source.mediaElement
 
 				textureConfig.update()
-				imagePassTexturesConfig['iChannel' + input.channel] = textureConfig
+				imagePassTexturesConfig[input.channel] = textureConfig
 			when 'video', 'webcam'
 				video = document.createElement('video')
 
@@ -136,15 +141,16 @@ $ ->
 				textureConfig =
 					src: video
 					update: ->
-						imagePassTextures['iChannel' + input.channel] = twgl.createTexture(gl, textureConfig)
+						imagePassTextures[input.channel] = twgl.createTexture(gl, textureConfig)
+						imagePassChannelTime[input.channel] = video.currentTime
 
 				samplerToConfig(input.sampler, textureConfig)
 				video.addEventListener 'canplay', ->
 					video.width = @videoWidth
 					video.height = @videoHeight
 					video.play()
-					imagePassTextures['iChannel' + input.channel] = twgl.createTexture(gl, textureConfig)
-					imagePassTexturesConfig['iChannel' + input.channel] = textureConfig
+					imagePassTextures[input.channel] = twgl.createTexture(gl, textureConfig)
+					imagePassTexturesConfig[input.channel] = textureConfig
 					imagePassChannelResolution[input.channel * 3] = @videoWidth
 					imagePassChannelResolution[input.channel * 3 + 1] = @videoHeight
 			when 'keyboard'
@@ -157,15 +163,15 @@ $ ->
 					width: 256
 					height: 2
 
-				imagePassTexturesConfig['iChannel' + input.channel] = textureConfig
+				imagePassTexturesConfig[input.channel] = textureConfig
 
 				$('body').on 'keydown', (event)->
 					buffer[event.which] = 255
 					buffer[event.which + 256] = 255 - buffer[event.which + 256]
-					imagePassTextures['iChannel' + input.channel] = twgl.createTexture(gl, textureConfig)
+					imagePassTextures[input.channel] = twgl.createTexture(gl, textureConfig)
 				$('body').on 'keyup', (event)->
 					buffer[event.which] = 0
-					imagePassTextures['iChannel' + input.channel] = twgl.createTexture(gl, textureConfig)
+					imagePassTextures[input.channel] = twgl.createTexture(gl, textureConfig)
 			else
 				console.log("Input ignored: #{input.ctype}", input)
 
@@ -176,8 +182,8 @@ $ ->
 			imagePass.inputs.forEach (input)->
 				switch input.ctype
 					when 'texture', 'cubemap'
-						imagePassChannelResolution[input.channel * 3] = imgs['iChannel' + input.channel].width
-						imagePassChannelResolution[input.channel * 3 + 1] = imgs['iChannel' + input.channel].height
+						imagePassChannelResolution[input.channel * 3] = imgs[input.channel].width
+						imagePassChannelResolution[input.channel * 3 + 1] = imgs[input.channel].height
 					when 'music', 'mic'
 						imagePassChannelResolution[input.channel * 3] = 512
 						imagePassChannelResolution[input.channel * 3 + 1] = 2
@@ -220,19 +226,18 @@ $ ->
 		twgl.resizeCanvasToDisplaySize(gl.canvas);
 		gl.viewport(0, 0, gl.canvas.width, gl.canvas.height)
 
-		#TODO: iChannelTime
 		d = new Date()
 		uniforms =
 			iResolution: [gl.canvas.width, gl.canvas.height, 0]
 			iGlobalTime: time / 1000
-			iChannelTime: [0, 0, 0, 0]
+			iChannelTime: imagePassChannelTime
 			iChannelResolution: imagePassChannelResolution
 			iMouse: mouse
 			iDate: [d.getFullYear(), d.getMonth(), d.getDate(), d.getHours()*3600 + d.getMinutes()*60 + d.getSeconds() + d.getMilliseconds()/1000]
 			iSampleRate: 441000
 
 		for channel, texture of imagePassTextures
-			uniforms[channel] = texture
+			uniforms['iChannel' + channel] = texture
 
 		twgl.setUniforms(programInfo, uniforms)
 		twgl.drawBufferInfo(gl, gl.TRIANGLE_STRIP, bufferInfo)
@@ -240,8 +245,8 @@ $ ->
 		requestAnimationFrame(render)
 
 		# All done, update inputs
-		for channel, config of imagePassTexturesConfig
-			config.update() if config.update
+		for config in imagePassTexturesConfig
+			config.update() if config and config.update
 
 	gl.useProgram(programInfo.program)
 	twgl.setBuffersAndAttributes(gl, programInfo, bufferInfo)
