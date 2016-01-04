@@ -15,11 +15,8 @@ class ShaderRender
 			if pass.type == @type
 				@pass = pass
 
-		if @pass
-			@initialize()
-		else
-			@initialize = null
-			@render = null
+
+		@initialize() if @pass
 
 	initialize: =>
 		@pass.inputs.forEach (input)=>
@@ -51,7 +48,7 @@ class ShaderRender
 
 					if input.ctype == 'music'
 						audio = new Audio()
-						audio.src = window.config['asset.host'] + input.src
+						audio.src = @config + input.src
 						audio.autoplay = true
 						audio.loop = true
 						source = context.createMediaElementSource(audio)
