@@ -12,6 +12,38 @@ $ ->
 	$('.ui.sidebar').sidebar 'attach events', '.toc.item'
 	$('.ui.search').search()
 
+	# utils
+	samplerToConfig = (sampler, config)->
+		switch sampler.filter
+			when 'nearest'
+				config.filter = gl.NEAREST
+			when 'linear'
+				config.filter = gl.LINEAR
+			when 'mipmap'
+				config.filter = gl.LINEAR_MIPMAP_NEAREST
+			else
+				console.log("Unexpected filter: #{sampler.filter}", sampler)
+
+		switch sampler.wrap
+			when 'clamp'
+				config.wrap = gl.CLAMP_TO_EDGE
+			when 'repeat'
+				config.wrap = gl.REPEAT
+			else
+				console.log("Unexpected wrap: #{sampler.wrap}", sampler)
+
+		switch sampler.vflip
+			when 'true'
+				config.flipY = true
+			when 'false'
+				config.flipY = false
+			else
+				console.log("Unexpected vflip: #{sampler.vflip}", sampler)
+
+	#polyfill
+	navigator.getUserMedia = navigator.getUserMedia or navigator.webkitGetUserMedia or navigator.mozGetUserMedia or navigator.msGetUserMedia
+
+	#WebGL
 	gl = twgl.getWebGLContext(document.querySelector('#home'))
 
 	imagePass = null
@@ -46,34 +78,8 @@ $ ->
 					textureConfig.src = input.src.map (src)->
 						window.config['asset.host'] + src
 
-				switch input.sampler.filter
-					when 'nearest'
-						textureConfig.filter = gl.NEAREST
-					when 'linear'
-						textureConfig.filter = gl.LINEAR
-					when 'mipmap'
-						textureConfig.filter = gl.LINEAR_MIPMAP_NEAREST
-					else
-						console.log("Unexpected filter: #{input.sampler.filter}", input)
-
-				switch input.sampler.wrap
-					when 'clamp'
-						textureConfig.wrap = gl.CLAMP_TO_EDGE
-					when 'repeat'
-						textureConfig.wrap = gl.REPEAT
-					else
-						console.log("Unexpected wrap: #{input.sampler.wrap}", input)
-
-				switch input.sampler.vflip
-					when 'true'
-						textureConfig.flipY = true
-					when 'false'
-						textureConfig.flipY = false
-					else
-						console.log("Unexpected vflip: #{input.sampler.vflip}", input)
-
+				samplerToConfig(input.sampler, textureConfig)
 				imagePassTexturesConfig['iChannel' + input.channel] = textureConfig
-
 			when 'music', 'mic'
 				context = new AudioContext()
 				analyser = context.createAnalyser()
@@ -92,7 +98,6 @@ $ ->
 					source = context.createMediaElementSource(audio)
 					source.connect(analyser)
 				else
-					navigator.getUserMedia = navigator.getUserMedia or navigator.webkitGetUserMedia or navigator.mozGetUserMedia or navigator.msGetUserMedia
 					navigator.getUserMedia {audio: true}, (stream)->
 						source = context.createMediaStreamSource(stream)
 						source.connect(analyser)
@@ -117,6 +122,32 @@ $ ->
 
 				textureConfig.update()
 				imagePassTexturesConfig['iChannel' + input.channel] = textureConfig
+			when 'video', 'webcam'
+				video = document.createElement('video')
+
+				if input.ctype == 'video'
+					video.src = window.config['asset.host'] + input.src
+					video.loop = true
+				else
+					navigator.getUserMedia {video: true}, (stream)->
+						video.src = URL.createObjectURL(stream)
+					, (error)->
+						console.error(error) if error
+
+				textureConfig =
+					src: video
+					update: ->
+						imagePassTextures['iChannel' + input.channel] = twgl.createTexture(gl, textureConfig)
+
+				samplerToConfig(input.sampler, textureConfig)
+				video.addEventListener 'canplay', ->
+					video.width = @videoWidth
+					video.height = @videoHeight
+					video.play()
+					imagePassTextures['iChannel' + input.channel] = twgl.createTexture(gl, textureConfig)
+					imagePassTexturesConfig['iChannel' + input.channel] = textureConfig
+					imagePassChannelResolution[input.channel * 3] = @videoWidth
+					imagePassChannelResolution[input.channel * 3 + 1] = @videoHeight
 			else
 				console.log("Input ignored: #{input.ctype}", input)
 
@@ -132,6 +163,8 @@ $ ->
 					when 'music', 'mic'
 						imagePassChannelResolution[input.channel * 3] = 512
 						imagePassChannelResolution[input.channel * 3 + 1] = 2
+					when 'video', 'webcam'
+						#pass
 					else
 						console.log("Input ignored again: #{input.ctype}", input)
 
