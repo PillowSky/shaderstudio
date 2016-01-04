@@ -62,7 +62,6 @@ $ ->
 			else
 				console.log("Pass ignored: #{pass.type}", pass)
 
-	#TODO: imagePass: video, webcam, keyboard
 	#TODO: soundPass: texture
 	headCode = $('#head').text()
 	imagePass.inputs.forEach (input)->
@@ -148,6 +147,25 @@ $ ->
 					imagePassTexturesConfig['iChannel' + input.channel] = textureConfig
 					imagePassChannelResolution[input.channel * 3] = @videoWidth
 					imagePassChannelResolution[input.channel * 3 + 1] = @videoHeight
+			when 'keyboard'
+				buffer = new Uint8Array(256 * 2)
+				textureConfig =
+					filter: gl.NEAREST
+					wrap: gl.CLAMP_TO_EDGE
+					format: gl.LUMINANCE
+					src: buffer
+					width: 256
+					height: 2
+
+				imagePassTexturesConfig['iChannel' + input.channel] = textureConfig
+
+				$('body').on 'keydown', (event)->
+					buffer[event.which] = 255
+					buffer[event.which + 256] = 255 - buffer[event.which + 256]
+					imagePassTextures['iChannel' + input.channel] = twgl.createTexture(gl, textureConfig)
+				$('body').on 'keyup', (event)->
+					buffer[event.which] = 0
+					imagePassTextures['iChannel' + input.channel] = twgl.createTexture(gl, textureConfig)
 			else
 				console.log("Input ignored: #{input.ctype}", input)
 
@@ -164,7 +182,10 @@ $ ->
 						imagePassChannelResolution[input.channel * 3] = 512
 						imagePassChannelResolution[input.channel * 3 + 1] = 2
 					when 'video', 'webcam'
-						#pass
+						null
+					when 'keyboard'
+						imagePassChannelResolution[input.channel * 3] = 256
+						imagePassChannelResolution[input.channel * 3 + 1] = 2
 					else
 						console.log("Input ignored again: #{input.ctype}", input)
 
