@@ -64,7 +64,8 @@ html
 							.results
 						.right.item
 							a.ui.inverted.button Login
-				canvas#home
+				canvas#canvasImage
+				canvas#canvasSound
 				.ui.text.container
 					h1.ui.inverted.header.VisbyRoundCF Shader Studio
 					h2.VisbyRoundCF Browse, create and share shader online!
@@ -141,11 +142,14 @@ html
 							p
 								| Extra space for a call to action inside the footer that could help re-engage users.
 
-		script#pass(type='x-shader/x-vertex')
+		script#glslPass(type='x-shader/x-vertex')
 			include glsl/pass.vert
 
-		script#head(type='x-shader/x-fragment')
-			include glsl/head.frag
+		script#glslImage(type='x-shader/x-fragment')
+			include glsl/image.frag
+
+		script#glslSound(type='x-shader/x-fragment')
+			include glsl/sound.frag
 
 		script.
 			window.shader = !{JSON.stringify(shader)}
@@ -153,5 +157,7 @@ html
 
 		script(src='/components/jquery/dist/jquery.min.js')
 		script(src='/components/semantic/dist/semantic.min.js')
-		script(src='/components/twgl.js/dist/twgl.min.js')
+		script(src='/components/twgl.js/dist/twgl.js')
+		srcipt(src='/js/common.js')
+		script(src='/js/render.js')
 		script(src='/js/index.js')

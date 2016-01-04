@@ -10,7 +10,6 @@ uniform sampler2D iChannel1;
 uniform sampler2D iChannel2;
 uniform sampler2D iChannel3;
 uniform vec4 iDate;
-uniform float iSampleRate;
 
 void mainImage(out vec4 fragColor, in vec2 fragCoord);
 

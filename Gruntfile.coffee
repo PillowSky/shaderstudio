@@ -16,11 +16,15 @@ module.exports = (grunt) ->
 		'public/css/view.css': 'public/css/view.less'
 
 	coffeeFiles =
+		'public/js/common.js': 'public/js/common.coffee'
+		'public/js/render.js': ['public/js/ShaderRender.coffee', 'public/js/ImageRender.coffee', 'public/js/SoundRender.coffee']
 		'public/js/index.js': 'public/js/index.coffee'
 		'public/js/search.js': 'public/js/search.coffee'
 		'public/js/view.js': 'public/js/view.coffee'
 
 	uglifyFiles =
+		'public/js/common.js': 'public/js/common.js'
+		'public/js/render.js': 'public/js/render.js'
 		'public/js/index.js': 'public/js/index.js'
 		'public/js/search.js': 'public/js/search.js'
 		'public/js/view.js': 'public/js/view.js'
