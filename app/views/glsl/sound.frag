@@ -16,10 +16,10 @@ uniform float iBlockOffset;
 vec2 mainSound(float time);
 
 void main() {
-	float t = iBlockOffset + (gl_FragCoord.x + gl_FragCoord.y*512.0)/44100.0;
+	float t = iBlockOffset + (gl_FragCoord.x + gl_FragCoord.y*1024.0) / 44100.0;
 	vec2 y = mainSound(t);
-	vec2 v  = floor((0.5+0.5*y)*65536.0);
-	vec2 vl =   mod(v,256.0)/255.0;
-	vec2 vh = floor(v/256.0)/255.0;
-	gl_FragColor = vec4(vl.x,vh.x,vl.y,vh.y);
+	vec2 v = floor((0.5 + 0.5*y) * 65536.0);
+	vec2 vl = mod(v, 256.0) / 255.0;
+	vec2 vh = floor(v / 256.0) / 255.0;
+	gl_FragColor = vec4(vl.x, vh.x, vl.y, vh.y);
 }

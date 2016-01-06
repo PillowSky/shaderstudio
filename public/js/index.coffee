@@ -18,12 +18,10 @@ $ ->
 	window.shader.renderpass.forEach (pass)->
 		switch pass.type
 			when 'image'
-				if imageRender
-					console.log("Pass ignored: #{pass.type}", pass)
-				else
+				if not imageRender
 					imageRender = new ImageRender(
-						document.querySelector('#canvasImage'),
-						$('#canvasImage'),
+						document.querySelector('#canvas')
+						$('#canvas'),
 						$('body'),
 						$('#glslVert').text(),
 						$('#glslImage').text(),
@@ -31,19 +29,26 @@ $ ->
 						window.config['asset.host']
 					)
 					imageRender.start()
-			when 'sound'
-				if soundRender
-					console.log("Pass ignored: #{pass.type}", pass)
 				else
+					console.log("Pass ignored: #{pass.type}", pass)
+
+			when 'sound'
+				if not soundRender
+					canvas = document.createElement('canvas')
+					canvas.width = 1024
+					canvas.height = 1024
+
 					soundRender = new SoundRender(
-						document.querySelector('#canvasSound'),
-						$('#canvasImage'),
-						$('body'),
+						canvas,
+						null
+						null,
 						$('#glslVert').text(),
 						$('#glslSound').text(),
 						pass,
 						window.config['asset.host']
 					)
 					soundRender.start()
+				else
+					console.log("Pass ignored: #{pass.type}", pass)
 			else
 				console.log("Pass ignored: #{pass.type}", pass)

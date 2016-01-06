@@ -57,25 +57,25 @@ class ShaderRender
 						, (error)->
 							console.error(error) if error
 
-					buffer = new ArrayBuffer(1024)
-					freq = new Uint8Array(buffer, 0, 512)
-					wave = new Uint8Array(buffer, 512, 512)
+						buffer = new ArrayBuffer(1024)
+						freq = new Uint8Array(buffer, 0, 512)
+						wave = new Uint8Array(buffer, 512, 512)
 
-					texConfig =
-						filter: @gl.LINEAR
-						wrap: @gl.CLAMP_TO_EDGE
-						format: @gl.LUMINANCE
-						src: new Uint8Array(buffer)
-						width: 512
-						height: 2
-						update: =>
-							analyser.getByteFrequencyData(freq)
-							analyser.getByteTimeDomainData(wave)
-							@textures[input.channel] = twgl.createTexture(@gl, texConfig)
-							#double check here due to Chrome implementation limits
-							@channelTimes[input.channel] = source?.mediaElement?.currentTime
+						texConfig =
+							filter: @gl.LINEAR
+							wrap: @gl.CLAMP_TO_EDGE
+							format: @gl.LUMINANCE
+							src: new Uint8Array(buffer)
+							width: 512
+							height: 2
+							update: =>
+								analyser.getByteFrequencyData(freq)
+								analyser.getByteTimeDomainData(wave)
+								@textures[input.channel] = twgl.createTexture(@gl, texConfig)
+								#double check here due to Chrome implementation limits
+								@channelTimes[input.channel] = source?.mediaElement?.currentTime
 
-					@textureConfigs[input.channel] = texConfig
+						@textureConfigs[input.channel] = texConfig
 
 				when 'video', 'webcam'
 					video = document.createElement('video')
@@ -147,20 +147,6 @@ class ShaderRender
 						else
 							console.warn("Input ignored again: #{input.ctype}", input)
 
-		@mouse.mousedown =>
-			base = @mouse.offset()
-			@mousePositions[2] = event.pageX - base.left
-			@mousePositions[3] = event.pageY - base.top
-
-			@mouse.mousemove (event)=>
-				offset = @mouse.offset()
-				@mousePositions[0] = event.pageX - offset.left
-				@mousePositions[1] = event.pageY - offset.top
-
-		@mouse.mouseup =>
-			@mouse.unbind('mousemove')
-
-		#prepare info
 		@programInfo = twgl.createProgramInfo(@gl, [@vert, @frag + @pass.code])
 		@bufferInfo = twgl.createBufferInfoFromArrays(@gl, {
 			position: {
@@ -175,38 +161,8 @@ class ShaderRender
 		})
 
 	render: (time)=>
-		twgl.resizeCanvasToDisplaySize(@gl.canvas);
-		@gl.viewport(0, 0, @gl.canvas.width, @gl.canvas.height)
-
-		# update inputs
-		for texConfig in @textureConfigs
-			texConfig?.update?()
-
-		# update uniforms
-		d = new Date()
-		uniforms =
-			iResolution: [@gl.canvas.width, @gl.canvas.height, 0]
-			iGlobalTime: time / 1000
-			iChannelTime: @channelTimes
-			iChannelResolution: @channelResolutions
-			iMouse: @mousePositions
-			iDate: [d.getFullYear(), d.getMonth(), d.getDate(), d.getHours()*3600 + d.getMinutes()*60 + d.getSeconds() + d.getMilliseconds()/1000]
-
-		# update texture
-		for channel, texture of @textures
-			uniforms['iChannel' + channel] = texture
-
-		twgl.setUniforms(@programInfo, uniforms)
-		twgl.drawBufferInfo(@gl, @gl.TRIANGLE_STRIP, @bufferInfo)
-
-		requestAnimationFrame(@render) if @isStarted
 
 	start: =>
-		if not @isStarted
-			@isStarted = true
-			@gl.useProgram(@programInfo.program)
-			twgl.setBuffersAndAttributes(@gl, @programInfo, @bufferInfo)
-			@render()
 
 	stop: =>
 		@isStarted = false
