@@ -12,11 +12,38 @@ $ ->
 	$('.ui.sidebar').sidebar 'attach events', '.toc.item'
 	$('.ui.search').search()
 
+	imageRender = null
+	soundRender = null
 
-	imageRender = new ImageRender('#canvasImage', 'image', $('#canvasImage'), $('body'), $('#glslPass').text(), $('#glslImage').text(), window.shader, window.config)
-
-	render = (time)->
-		imageRender.render(time)
-		requestAnimationFrame(render)
-
-	requestAnimationFrame(render)
+	window.shader.renderpass.forEach (pass)->
+		switch pass.type
+			when 'image'
+				if imageRender
+					console.log("Pass ignored: #{pass.type}", pass)
+				else
+					imageRender = new ImageRender(
+						document.querySelector('#canvasImage'),
+						$('#canvasImage'),
+						$('body'),
+						$('#glslVert').text(),
+						$('#glslImage').text(),
+						pass,
+						window.config['asset.host']
+					)
+					imageRender.start()
+			when 'sound'
+				if soundRender
+					console.log("Pass ignored: #{pass.type}", pass)
+				else
+					soundRender = new SoundRender(
+						document.querySelector('#canvasSound'),
+						$('#canvasImage'),
+						$('body'),
+						$('#glslVert').text(),
+						$('#glslSound').text(),
+						pass,
+						window.config['asset.host']
+					)
+					soundRender.start()
+			else
+				console.log("Pass ignored: #{pass.type}", pass)

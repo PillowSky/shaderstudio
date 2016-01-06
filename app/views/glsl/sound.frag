@@ -11,6 +11,7 @@ uniform sampler2D iChannel2;
 uniform sampler2D iChannel3;
 uniform vec4 iDate;
 uniform float iSampleRate;
+uniform float iBlockOffset;
 
 vec2 mainSound(float time);
 

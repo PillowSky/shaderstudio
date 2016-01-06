@@ -1,7 +1,8 @@
+'use strict'
+
 class ShaderRender
-	constructor: (@canvas, @type, @mouse, @keyboard, @vert, @frag, @shader, @config) ->
-		@gl = twgl.getWebGLContext(document.querySelector(@canvas))
-		@pass = null
+	constructor: (@canvas, @mouse, @keyboard, @vert, @frag, @pass, @host) ->
+		@gl = twgl.getWebGLContext(@canvas)
 		@programInfo = null
 		@bufferInfo = null
 		@textures = new Array(4)
@@ -9,14 +10,9 @@ class ShaderRender
 		@channelResolutions = new Float32Array(12)
 		@channelTimes = new Float32Array(4)
 		@mousePositions = new Float32Array(4)
-
-		#select pass
-		for pass in @shader.renderpass
-			if pass.type == @type
-				@pass = pass
-
-
-		@initialize() if @pass
+		@isStarted = false
+		@isMuted = false
+		@initialize()
 
 	initialize: =>
 		@pass.inputs.forEach (input)=>
@@ -25,12 +21,12 @@ class ShaderRender
 					texConfig = {}
 
 					if input.ctype == 'texture'
-						texConfig.src = @config['asset.host'] + input.src
+						texConfig.src = @host + input.src
 					else
 						@frag = @frag.replace("sampler2D #{'iChannel' + input.channel}", "samplerCube #{'iChannel' + input.channel}")
 						texConfig.target = @gl.TEXTURE_CUBE_MAP
 						texConfig.src = input.src.map (src)=>
-							@config['asset.host'] + src
+							@host + src
 
 					@samplerToConfig(input.sampler, texConfig)
 					@textureConfigs[input.channel] = texConfig
@@ -48,7 +44,7 @@ class ShaderRender
 
 					if input.ctype == 'music'
 						audio = new Audio()
-						audio.src = @config + input.src
+						audio.src = @host + input.src
 						audio.autoplay = true
 						audio.loop = true
 						source = context.createMediaElementSource(audio)
@@ -85,7 +81,7 @@ class ShaderRender
 					video = document.createElement('video')
 
 					if input.ctype == 'video'
-						video.src = @config['asset.host'] + input.src
+						video.src = @host + input.src
 						video.loop = true
 					else
 						navigator.getUserMedia {video: true}, (stream)->
@@ -182,6 +178,11 @@ class ShaderRender
 		twgl.resizeCanvasToDisplaySize(@gl.canvas);
 		@gl.viewport(0, 0, @gl.canvas.width, @gl.canvas.height)
 
+		# update inputs
+		for texConfig in @textureConfigs
+			texConfig?.update?()
+
+		# update uniforms
 		d = new Date()
 		uniforms =
 			iResolution: [@gl.canvas.width, @gl.canvas.height, 0]
@@ -191,17 +192,28 @@ class ShaderRender
 			iMouse: @mousePositions
 			iDate: [d.getFullYear(), d.getMonth(), d.getDate(), d.getHours()*3600 + d.getMinutes()*60 + d.getSeconds() + d.getMilliseconds()/1000]
 
+		# update texture
 		for channel, texture of @textures
 			uniforms['iChannel' + channel] = texture
 
-		@gl.useProgram(@programInfo.program)
-		twgl.setBuffersAndAttributes(@gl, @programInfo, @bufferInfo)
 		twgl.setUniforms(@programInfo, uniforms)
 		twgl.drawBufferInfo(@gl, @gl.TRIANGLE_STRIP, @bufferInfo)
 
-		# All done, update inputs
-		for config in @textureConfigs
-			config?.update?()
+		requestAnimationFrame(@render) if @isStarted
+
+	start: =>
+		if not @isStarted
+			@isStarted = true
+			@gl.useProgram(@programInfo.program)
+			twgl.setBuffersAndAttributes(@gl, @programInfo, @bufferInfo)
+			@render()
+
+	stop: =>
+		@isStarted = false
+
+	mute: =>
+
+	vocal: =>
 
 	samplerToConfig: (sampler, config)=>
 		switch sampler.filter
