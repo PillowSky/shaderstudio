@@ -11,12 +11,12 @@ uniform sampler2D iChannel2;
 uniform sampler2D iChannel3;
 uniform vec4 iDate;
 uniform float iSampleRate;
-uniform float iBlockOffset;
+uniform float iFrameDimension;
 
 vec2 mainSound(float time);
 
 void main() {
-	float t = iBlockOffset + (gl_FragCoord.x + gl_FragCoord.y*1024.0) / 44100.0;
+	float t = iGlobalTime + (gl_FragCoord.x + gl_FragCoord.y * iFrameDimension) / iSampleRate;
 	vec2 y = mainSound(t);
 	vec2 v = floor((0.5 + 0.5*y) * 65536.0);
 	vec2 vl = mod(v, 256.0) / 255.0;

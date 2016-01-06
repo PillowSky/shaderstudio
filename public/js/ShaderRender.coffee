@@ -57,25 +57,24 @@ class ShaderRender
 						, (error)->
 							console.error(error) if error
 
-						buffer = new ArrayBuffer(1024)
-						freq = new Uint8Array(buffer, 0, 512)
-						wave = new Uint8Array(buffer, 512, 512)
+					buffer = new ArrayBuffer(1024)
+					freq = new Uint8Array(buffer, 0, 512)
+					wave = new Uint8Array(buffer, 512, 512)
 
-						texConfig =
-							filter: @gl.LINEAR
-							wrap: @gl.CLAMP_TO_EDGE
-							format: @gl.LUMINANCE
-							src: new Uint8Array(buffer)
-							width: 512
-							height: 2
-							update: =>
-								analyser.getByteFrequencyData(freq)
-								analyser.getByteTimeDomainData(wave)
-								@textures[input.channel] = twgl.createTexture(@gl, texConfig)
-								#double check here due to Chrome implementation limits
-								@channelTimes[input.channel] = source?.mediaElement?.currentTime
+					texConfig =
+						format: @gl.LUMINANCE
+						src: new Uint8Array(buffer)
+						width: 512
+						height: 2
+						update: =>
+							analyser.getByteFrequencyData(freq)
+							analyser.getByteTimeDomainData(wave)
+							@textures[input.channel] = twgl.createTexture(@gl, texConfig)
+							#double check here due to Chrome implementation limits
+							@channelTimes[input.channel] = source?.mediaElement?.currentTime
 
-						@textureConfigs[input.channel] = texConfig
+					@samplerToConfig(input.sampler, texConfig)
+					@textureConfigs[input.channel] = texConfig
 
 				when 'video', 'webcam'
 					video = document.createElement('video')
@@ -92,7 +91,7 @@ class ShaderRender
 					texConfig =
 						src: video
 						update: =>
-							@textures[input.channel] = twgl.createTexture(gl, texConfig)
+							@textures[input.channel] = twgl.createTexture(@gl, texConfig)
 							@channelTimes[input.channel] = video.currentTime
 
 					@samplerToConfig(input.sampler, texConfig)
@@ -100,7 +99,7 @@ class ShaderRender
 						video.width = @videoWidth
 						video.height = @videoHeight
 						video.play()
-						@textures[input.channel] = twgl.createTexture(gl, texConfig)
+						@textures[input.channel] = twgl.createTexture(@gl, texConfig)
 						@textureConfigs[input.channel] = texConfig
 						@channelResolutions[input.channel * 3] = @videoWidth
 						@channelResolutions[input.channel * 3 + 1] = @videoHeight
@@ -108,22 +107,21 @@ class ShaderRender
 				when 'keyboard'
 					buffer = new Uint8Array(256 * 2)
 					texConfig =
-						filter: @gl.NEAREST
-						wrap: @gl.CLAMP_TO_EDGE
 						format: @gl.LUMINANCE
 						src: buffer
 						width: 256
 						height: 2
 
+					@samplerToConfig(input.sampler, texConfig)
 					@textureConfigs[input.channel] = texConfig
 
 					@keyboard.on 'keydown', (event)=>
 						buffer[event.which] = 255
 						buffer[event.which + 256] = 255 - buffer[event.which + 256]
-						@textures[input.channel] = twgl.createTexture(gl, texConfig)
+						@textures[input.channel] = twgl.createTexture(@gl, texConfig)
 					@keyboard.on 'keyup', (event)=>
 						buffer[event.which] = 0
-						@textures[input.channel] = twgl.createTexture(gl, texConfig)
+						@textures[input.channel] = twgl.createTexture(@gl, texConfig)
 				else
 					console.warn("Input ignored: #{input.ctype}", input)
 
@@ -165,7 +163,6 @@ class ShaderRender
 	start: =>
 
 	stop: =>
-		@isStarted = false
 
 	mute: =>
 

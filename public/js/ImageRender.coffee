@@ -33,6 +33,7 @@ class ImageRender extends ShaderRender
 			iChannelResolution: @channelResolutions
 			iMouse: @mousePositions
 			iDate: [d.getFullYear(), d.getMonth(), d.getDate(), d.getHours()*3600 + d.getMinutes()*60 + d.getSeconds() + d.getMilliseconds()/1000]
+			iSampleRate: 44100
 
 		# update texture
 		for channel, texture of @textures
@@ -48,6 +49,9 @@ class ImageRender extends ShaderRender
 			@isStarted = true
 			@gl.useProgram(@programInfo.program)
 			twgl.setBuffersAndAttributes(@gl, @programInfo, @bufferInfo)
-			@render()
+			@render(0)
+
+	stop: =>
+		@isStarted = false
 
 window.ImageRender = ImageRender
