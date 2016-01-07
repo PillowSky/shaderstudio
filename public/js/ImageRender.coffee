@@ -46,20 +46,20 @@ class ImageRender extends ShaderRender
 
 	start: =>
 		if not @isStarted
+			@timestamp = performance.now() - @laststamp
 			if @everStarted
 				for texConfig in @textureConfigs
 					texConfig?.audio?.resume?()
 					texConfig?.video?.play?()
-			requestAnimationFrame(@render)
-			@timestamp = performance.now() - @laststamp
 			@isStarted = @everStarted = true
+			@render(performance.now())
 
 	stop: =>
 		if @isStarted
+			@laststamp = performance.now() - @timestamp
 			for texConfig in @textureConfigs
 				texConfig?.audio?.suspend?()
 				texConfig?.video?.pause?()
-			@laststamp = performance.now() - @timestamp
 			@isStarted = false
 
 window.ImageRender = ImageRender

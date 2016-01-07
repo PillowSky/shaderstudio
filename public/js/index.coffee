@@ -15,40 +15,81 @@ $ ->
 	imageRender = null
 	soundRender = null
 
-	window.shader.renderpass.forEach (pass)->
-		switch pass.type
-			when 'image'
-				if not imageRender
-					imageRender = new ImageRender(
-						document.querySelector('#canvas')
-						$('#canvas'),
-						$('body'),
-						$('#glslVert').text(),
-						$('#glslImage').text(),
-						pass,
-						window.config['asset.host']
-					)
-					imageRender.start()
+	createShader = ->
+		window.shader.renderpass.forEach (pass)->
+			switch pass.type
+				when 'image'
+					if not imageRender
+						imageRender = new ImageRender(
+							document.querySelector('#canvas')
+							$('#canvas'),
+							$('body'),
+							$('#glslVert').text(),
+							$('#glslImage').text(),
+							pass,
+							window.config['asset.host']
+						)
+					else
+						console.log("Pass ignored: #{pass.type}", pass)
+
+				when 'sound'
+					if not soundRender
+						soundRender = new SoundRender(
+							document.createElement('canvas'),
+							null
+							null,
+							$('#glslVert').text(),
+							$('#glslSound').text(),
+							pass,
+							window.config['asset.host']
+						)
+					else
+						console.log("Pass ignored: #{pass.type}", pass)
 				else
 					console.log("Pass ignored: #{pass.type}", pass)
 
-			when 'sound'
-				if not soundRender
-					canvas = document.createElement('canvas')
-					canvas.width = 1024
-					canvas.height = 1024
+	startShader = ->
+		imageRender?.start()
+		soundRender?.start()
 
-					soundRender = new SoundRender(
-						canvas,
-						null
-						null,
-						$('#glslVert').text(),
-						$('#glslSound').text(),
-						pass,
-						window.config['asset.host']
-					)
-					soundRender.start()
-				else
-					console.log("Pass ignored: #{pass.type}", pass)
-			else
-				console.log("Pass ignored: #{pass.type}", pass)
+	stopShader = ->
+		imageRender?.stop()
+		soundRender?.stop()
+
+	destroyShader = ->
+		imageRender = null
+		soundRender = null
+
+	shiftShader = (offset)->
+		stopShader()
+		homeShaders = window.config['home.shaders']
+		newIndex = homeShaders.indexOf(window.shader.info.id) + offset
+		newIndex = homeShaders.length - 1 if newIndex < 0
+		newIndex = 0 if newIndex >= homeShaders.length
+
+		$.get "/api/shaders/#{homeShaders[newIndex]}", (data)->
+			#wait for previous shader's render call finished
+			requestAnimationFrame ->
+				window.shader = data
+				destroyShader()
+				createShader()
+				startShader()
+
+	$('#left').click ->
+		shiftShader(-1)
+
+	$('#right').click ->
+		shiftShader(1)
+
+	$('#control').click ->
+		if imageRender?.isStarted or soundRender?.isStarted
+			stopShader()
+			$('#control').children('i.icon').removeClass('pause').addClass('play')
+		else
+			startShader()
+			$('#control').children('i.icon').removeClass('play').addClass('pause')
+
+	setTimeout ->
+		createShader()
+		startShader()
+	, 0

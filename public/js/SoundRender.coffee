@@ -3,13 +3,15 @@
 class SoundRender extends ShaderRender
 	initialize: =>
 		super()
+		@frameDimension = 2048
+		@canvas.width = @frameDimension
+		@canvas.height = @frameDimension
 		@fbo = twgl.createFramebufferInfo(@gl, [
 			{format: @gl.RGBA, type: @gl.UNSIGNED_BYTE, min: @gl.LINEAR, wrap: @gl.CLAMP_TO_EDGE}
 		])
 		twgl.bindFramebufferInfo(@gl, @fbo)
 		@audioContext = new AudioContext()
 		@sampleRate = @audioContext.sampleRate
-		@frameDimension = 1024
 
 	render: (time = performance.now())=>
 		# update inputs
@@ -61,23 +63,23 @@ class SoundRender extends ShaderRender
 
 	start: =>
 		if not @isStarted
+			@timestamp = performance.now() - @laststamp
 			if @everStarted
+				@audioContext.resume()
 				for texConfig in @textureConfigs
 					texConfig?.audio?.resume?()
 					texConfig?.video?.play?()
-				@audioContext.resume()
 			else
 				@render()
-			@timestamp = performance.now() - @laststamp
 			@isStarted = @everStarted = true
 
 	stop: =>
 		if @isStarted
+			@laststamp = performance.now() - @timestamp
+			@audioContext.suspend()
 			for texConfig in @textureConfigs
 				texConfig?.audio?.suspend?()
 				texConfig?.video?.pause?()
-			@audioContext.suspend()
-			@laststamp = performance.now() - @timestamp
 			@isStarted = false
 
 window.SoundRender = SoundRender
