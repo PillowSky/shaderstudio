@@ -11,7 +11,9 @@ class ShaderRender
 		@channelTimes = new Float32Array(4)
 		@mousePositions = new Float32Array(4)
 		@isStarted = false
-		@isMuted = false
+		@everStarted = false
+		@timestamp = 0
+		@laststamp = 0
 		@initialize()
 
 	initialize: =>
@@ -66,6 +68,7 @@ class ShaderRender
 						src: new Uint8Array(buffer)
 						width: 512
 						height: 2
+						audio: context
 						update: =>
 							analyser.getByteFrequencyData(freq)
 							analyser.getByteTimeDomainData(wave)
@@ -90,6 +93,7 @@ class ShaderRender
 
 					texConfig =
 						src: video
+						video: video
 						update: =>
 							@textures[input.channel] = twgl.createTexture(@gl, texConfig)
 							@channelTimes[input.channel] = video.currentTime
@@ -158,15 +162,8 @@ class ShaderRender
 			}
 		})
 
-	render: (time)=>
-
-	start: =>
-
-	stop: =>
-
-	mute: =>
-
-	vocal: =>
+		@gl.useProgram(@programInfo.program)
+		twgl.setBuffersAndAttributes(@gl, @programInfo, @bufferInfo)
 
 	samplerToConfig: (sampler, config)=>
 		switch sampler.filter
@@ -194,5 +191,14 @@ class ShaderRender
 				config.flipY = false
 			else
 				console.warn("Unexpected vflip: #{sampler.vflip}", sampler)
+
+	render: (time)=>
+		console.warning('render called from ShaderRender', time)
+
+	start: =>
+		console.warning('start called from ShaderRender')
+
+	stop: =>
+		console.warning('stop called from ShaderRender')
 
 window.ShaderRender = ShaderRender

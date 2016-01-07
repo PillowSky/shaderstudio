@@ -28,7 +28,7 @@ class ImageRender extends ShaderRender
 		d = new Date()
 		uniforms =
 			iResolution: [@gl.canvas.width, @gl.canvas.height, 0]
-			iGlobalTime: time / 1000
+			iGlobalTime: (time - @timestamp) / 1000
 			iChannelTime: @channelTimes
 			iChannelResolution: @channelResolutions
 			iMouse: @mousePositions
@@ -46,12 +46,20 @@ class ImageRender extends ShaderRender
 
 	start: =>
 		if not @isStarted
-			@isStarted = true
-			@gl.useProgram(@programInfo.program)
-			twgl.setBuffersAndAttributes(@gl, @programInfo, @bufferInfo)
-			@render(0)
+			if @everStarted
+				for texConfig in @textureConfigs
+					texConfig?.audio?.resume?()
+					texConfig?.video?.play?()
+			requestAnimationFrame(@render)
+			@timestamp = performance.now() - @laststamp
+			@isStarted = @everStarted = true
 
 	stop: =>
-		@isStarted = false
+		if @isStarted
+			for texConfig in @textureConfigs
+				texConfig?.audio?.suspend?()
+				texConfig?.video?.pause?()
+			@laststamp = performance.now() - @timestamp
+			@isStarted = false
 
 window.ImageRender = ImageRender

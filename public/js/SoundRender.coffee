@@ -8,10 +8,10 @@ class SoundRender extends ShaderRender
 		])
 		twgl.bindFramebufferInfo(@gl, @fbo)
 		@audioContext = new AudioContext()
-		@sampleRate = 44100
+		@sampleRate = @audioContext.sampleRate
 		@frameDimension = 1024
 
-	render: (time)=>
+	render: (time = performance.now())=>
 		# update inputs
 		for texConfig in @textureConfigs
 			texConfig?.update?()
@@ -20,7 +20,7 @@ class SoundRender extends ShaderRender
 		d = new Date()
 		uniforms =
 			iResolution: [@gl.canvas.width, @gl.canvas.height, 0]
-			iGlobalTime: if time then time/1000 else @audioContext.currentTime
+			iGlobalTime: (time - @timestamp) / 1000
 			iChannelTime: @channelTimes
 			iChannelResolution: @channelResolutions
 			iMouse: @mousePositions
@@ -37,7 +37,6 @@ class SoundRender extends ShaderRender
 
 		# pipe to audio
 		playSamples = @frameDimension ** 2
-		playTime = playSamples / @sampleRate
 
 		audioBuffer = @audioContext.createBuffer(2, playSamples, @sampleRate)
 		bufferL = audioBuffer.getChannelData(0)
@@ -53,20 +52,32 @@ class SoundRender extends ShaderRender
 		playNode = @audioContext.createBufferSource()
 		playNode.buffer = audioBuffer
 		playNode.connect(@audioContext.destination)
-		playNode.start(0)
+		playNode.start()
 
-		# padding 1000ms for latency
-		setTimeout(@render, (playTime - 1) * 1000) if @isStarted
+		# hack here due to chromium bug#121654
+		console.log(playNode)
+		playNode.onended = =>
+			@render()
 
 	start: =>
 		if not @isStarted
-			@isStarted = true
-			@gl.useProgram(@programInfo.program)
-			@gl.viewport(0, 0, @gl.canvas.width, @gl.canvas.height)
-			twgl.setBuffersAndAttributes(@gl, @programInfo, @bufferInfo)
-			@render(0)
+			if @everStarted
+				for texConfig in @textureConfigs
+					texConfig?.audio?.resume?()
+					texConfig?.video?.play?()
+				@audioContext.resume()
+			else
+				@render()
+			@timestamp = performance.now() - @laststamp
+			@isStarted = @everStarted = true
 
 	stop: =>
-		@isStarted = false
+		if @isStarted
+			for texConfig in @textureConfigs
+				texConfig?.audio?.suspend?()
+				texConfig?.video?.pause?()
+			@audioContext.suspend()
+			@laststamp = performance.now() - @timestamp
+			@isStarted = false
 
 window.SoundRender = SoundRender
