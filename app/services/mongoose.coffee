@@ -2,7 +2,7 @@
 
 mongoose = require('mongoose')
 
-if process.env.RUNTIME && process.env.RUNTIME == 'BAE'
+if process.env.BAE_ENV_APPID
 	db_username = '91ffd5e7cbe44f6fb8d6bdde574fc06e'
 	db_password = 'd977a9f49d6f4a78a7dfde99896efaea'
 	db_host = 'mongo.duapp.com'

@@ -21,7 +21,8 @@
 		"connect-multiparty": "2.x",
 		"jimp": "x",
 		"async": "1.x",
-		"mongoose": "4.x"
+		"mongoose": "4.x",
+		"request": "2.x"
 	},
 	"devDependencies": {
 		"grunt": "x",
