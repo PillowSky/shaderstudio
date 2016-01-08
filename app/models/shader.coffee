@@ -55,8 +55,8 @@ ShaderSchema = new mongoose.Schema({
 ShaderSchema.statics.findByShaderId = (shaderId, callback)->
 	@findOne({'info.id': shaderId}, callback)
 
-ShaderSchema.statics.select = (condition, skip, limit, callback)->
-	@find(condition).skip(skip).limit(limit).exec(callback)
+ShaderSchema.statics.select = (condition, sort, skip, limit, callback)->
+	@find(condition).sort(sort).skip(skip).limit(limit).exec(callback)
 
 ShaderSchema.statics.allId = (callback)->
 	@find({}, {'info.id': 1, _id: 0}).exec (error, docs)->
