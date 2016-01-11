@@ -9,10 +9,10 @@ html
 
 		//- Site Properties
 		title ShaderStudio - #{shader.info.name}
-		link(rel='stylesheet' href='/components/semantic/dist/semantic.min.css')
-		link(rel='stylesheet' href='/css/common.css')
-		link(rel='stylesheet' href='/css/view.css')
-		link(rel='icon' href='/img/favicon.ico')
+		link(rel='stylesheet' href='/static/components/semantic/dist/semantic.min.css')
+		link(rel='stylesheet' href='/static/css/common.css')
+		link(rel='stylesheet' href='/static/css/view.css')
+		link(rel='icon' href='/static/img/favicon.ico')
 
 	body
 		.ui.inverted.vertical.masthead.aligned.segment.interactive
@@ -20,11 +20,11 @@ html
 				.ui.large.secondary.inverted.pointing.menu
 					a.toc.item
 						i.sidebar.icon
-					a.item.VisbyRoundCF.nav-logo ShaderStudio
-					a.item Home
-					a.item Browse
-					a.item Create
-					a.item Live
+					a.item.VisbyRoundCF.nav-logo(href='/') ShaderStudio
+					a.item(href='/') Home
+					a.item(href='/browse') Browse
+					a.active.item(href='/create') Create
+					a.item(href='/live') Live
 					.ui.category.search.item
 						.ui.icon.input
 							input.prompt(type='text', placeholder='Search ShaderStudio')
@@ -33,7 +33,7 @@ html
 					.right.item
 						a.ui.inverted.button Login
 
-			.ui.grid.container#content
+			.ui.stackable.grid.container#content
 				.eight.wide.column#left
 					.row#canvasWrapper
 						canvas#canvas
@@ -78,9 +78,9 @@ html
 			window.shader = !{JSON.stringify(shader)}
 			window.config = !{JSON.stringify(config)}
 
-		script(src='/components/jquery/dist/jquery.min.js')
-		script(src='/components/semantic/dist/semantic.min.js')
-		script(src='/components/twgl.js/dist/twgl.min.js')
-		script(src='/components/ace-builds/src-min/ace.js')
-		script(src='/js/render.js')
-		script(src='/js/view.js')
+		script(src='/static/components/jquery/dist/jquery.min.js')
+		script(src='/static/components/semantic/dist/semantic.min.js')
+		script(src='/static/components/twgl.js/dist/twgl.min.js')
+		script(src='/static/components/ace-builds/src-min/ace.js')
+		script(src='/static/js/render.js')
+		script(src='/static/js/view.js')

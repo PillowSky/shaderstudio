@@ -13,7 +13,7 @@ config = {}
 ConfigSchema.statics.config = config
 
 ConfigSchema.statics.get = (key, callback)->
-	@find({'key': key}, callback)
+	@findOne({'key': key}, callback)
 
 ConfigSchema.statics.set = (key, value, callback)->
 	@update({'key': key}, {'key': key, 'value': value}, {upsert: true}, callback)

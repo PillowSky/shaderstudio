@@ -9,10 +9,10 @@ html
 
 		//- Site Properties
 		title ShaderStudio - Search
-		link(rel='stylesheet', href='/components/semantic/dist/semantic.min.css')
-		link(rel='stylesheet' href='/css/common.css')
-		link(rel='stylesheet', href='/css/search.css')
-		link(rel='icon' href='/img/favicon.ico')
+		link(rel='stylesheet' href='/static/components/semantic/dist/semantic.min.css')
+		link(rel='stylesheet' href='/static/css/common.css')
+		link(rel='stylesheet' href='/static/css/search.css')
+		link(rel='icon' href='/static/img/favicon.ico')
 
 	body
 		.ui.inverted.vertical.masthead.aligned.segment.interactive
@@ -21,8 +21,8 @@ html
 					a.item.VisbyRoundCF.nav-logo(href='/') ShaderStudio
 					a.item(href='/') Home
 					a.active.item(href='/browse') Browse
-					a.item Create
-					a.item Live
+					a.item(href='/create') Create
+					a.item(href='/live') Live
 					.ui.category.search.item
 						.ui.icon.input
 							input.prompt(type='text', placeholder='Search ShaderStudio')
@@ -37,25 +37,65 @@ html
 						i.sort.icon
 						| Sort:
 					.ui.buttons.right1em
-						.ui.active.inverted.button View
-						.ui.inverted.button Like
-						.ui.inverted.button Hots
-						.ui.inverted.button Time
+						if sort == 'view'
+							.ui.active.inverted.button View
+						else
+							a.ui.inverted.button(href="/search?sort=view&order=#{order}&filter=#{filter}") View
+
+						if sort == 'like'
+							.ui.active.inverted.button Like
+						else
+							a.ui.inverted.button(href="/search?sort=like&order=#{order}&filter=#{filter}") Like
+
+						if sort == 'comm'
+							.ui.active.inverted.button Comm
+						else
+							a.ui.inverted.button(href="/search?sort=comm&order=#{order}&filter=#{filter}") Comm
+
+						if sort == 'date'
+							.ui.active.inverted.button Date
+						else
+							a.ui.inverted.button(href="/search?sort=date&order=#{order}&filter=#{filter}") Date
 					.ui.icon.buttons
-						.ui.active.inverted.button
-							i.sort.content.descending.icon
-						.ui.inverted.button
-							i.sort.content.ascending.icon
+						if order == 'desc'
+							.ui.active.inverted.button
+								i.sort.content.descending.icon
+						else
+							a.ui.inverted.button(href="/search?page=#{page}&sort=#{sort}&order=desc&filter=#{filter}")
+								i.sort.content.descending.icon
+
+						if order == 'asc'
+							.ui.active.inverted.button
+								i.sort.content.ascending.icon
+						else
+							a.ui.inverted.button(href="/search?page=#{page}&sort=#{sort}&order=asc&filter=#{filter}")
+								i.sort.content.ascending.icon
+
 
 				.eight.wide.column
 					span.right1em
 						i.tags.icon
-						| Tags:
+						| Filter:
 					.ui.buttons
-						.ui.inverted.button Sound
-						.ui.inverted.button Reality
-						.ui.inverted.button Microphone
-						.ui.inverted.button Camera
+						if filter == 'gpusound'
+							.ui.active.inverted.button GPU Sound
+						else
+							a.ui.inverted.button(href="/search?sort=#{sort}&order=#{order}&filter=gpusound") GPU Sound
+
+						if filter == 'microphone'
+							.ui.active.inverted.button Microphone
+						else
+							a.ui.inverted.button(href="/search?sort=#{sort}&order=#{order}&filter=microphone") Microphone
+
+						if filter == 'musicinput'
+							.ui.active.inverted.button Music Input
+						else
+							a.ui.inverted.button(href="/search?sort=#{sort}&order=#{order}&filter=musicinput") Music Input
+
+						if filter == 'webcamera'
+							.ui.active.inverted.button Web Camera
+						else
+							a.ui.inverted.button(href="/search?sort=#{sort}&order=#{order}&filter=webcamera") Web Camera
 
 			.ui.stackable.four.column.grid.container#content
 				each shader, index in shaders
@@ -76,17 +116,20 @@ html
 
 			.ui.container.center.aligned.top1em
 				.ui.pagination.menu.inverted
-					a.active.item 1
-					a.item(href='/search?page=2') 2
-					a.item 3
-					a.item 4
-					a.item 5
-					a.item 6
-					a.item 7
-					a.item 8
-					a.item 9
-					a.item 10
-
+					- var i = 1
+					while i <= pages
+						if Math.abs(page - i) > 3
+							if i == 1
+								a.item(href="/search?page=#{i}&sort=#{sort}&order=#{order}&filter=#{filter}") #{i}
+								.disabled.item ...
+							else if i == pages
+								.disabled.item ...
+								a.item(href="/search?page=#{i}&sort=#{sort}&order=#{order}&filter=#{filter}") #{i}
+						else if	i == page
+							a.active.item #{i}
+						else
+							a.item(href="/search?page=#{i}&sort=#{sort}&order=#{order}&filter=#{filter}") #{i}
+						- i++
 		script#glslVert(type='x-shader/x-vertex')
 			include glsl/vert.vert
 
@@ -100,8 +143,8 @@ html
 			window.shaders = !{JSON.stringify(shaders)}
 			window.config = !{JSON.stringify(config)}
 
-		script(src='/components/jquery/dist/jquery.min.js')
-		script(src='/components/semantic/dist/semantic.min.js')
-		script(src='/components/twgl.js/dist/twgl.min.js')
-		script(src='/js/render.js')
-		script(src='/js/search.js')
+		script(src='/static/components/jquery/dist/jquery.min.js')
+		script(src='/static/components/semantic/dist/semantic.min.js')
+		script(src='/static/components/twgl.js/dist/twgl.min.js')
+		script(src='/static/js/render.js')
+		script(src='/static/js/search.js')

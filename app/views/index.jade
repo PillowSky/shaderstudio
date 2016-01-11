@@ -9,10 +9,10 @@ html
 
 		//- Site Properties
 		title ShaderStudio - Browse, create and share shader online!
-		link(rel='stylesheet' href='/components/semantic/dist/semantic.min.css')
-		link(rel='stylesheet' href='/css/common.css')
-		link(rel='stylesheet' href='/css/index.css')
-		link(rel='icon' href='/img/favicon.ico')
+		link(rel='stylesheet' href='/static/components/semantic/dist/semantic.min.css')
+		link(rel='stylesheet' href='/static/css/common.css')
+		link(rel='stylesheet' href='/static/css/index.css')
+		link(rel='icon' href='/static/img/favicon.ico')
 
 	body
 		//- Following Menu
@@ -34,7 +34,7 @@ html
 
 		//- Sidebar Menu
 		.ui.vertical.inverted.sidebar.menu
-			a.item.VisbyRoundCF.nav-logo ShaderStudio
+			a.item.VisbyRoundCF.nav-logo(href='/') ShaderStudio
 			a.active.item(href='/') Home
 			a.item(href='/browse') Browse
 			a.item Live
@@ -55,8 +55,8 @@ html
 						a.item.VisbyRoundCF.nav-logo(href='/') ShaderStudio
 						a.active.item(href='/') Home
 						a.item(href='/browse') Browse
-						a.item Create
-						a.item Live
+						a.item(href='/create') Create
+						a.item(href='/live') Live
 						.ui.category.search.item
 							.ui.icon.input
 								input.prompt(type='text', placeholder='Search ShaderStudio')
@@ -91,7 +91,7 @@ html
 							h3.ui.header We Make Developers Happier
 							p Shader are powerful but hard to write, but now with ShaderStudio you have wonderful tools to boost the productivity.
 						.six.wide.right.floated.column
-							img.ui.large.bordered.rounded.image(src='/img/white-image.png')
+							img.ui.large.bordered.rounded.image(src='/static/img/white-image.png')
 					.row
 						.center.aligned.column
 							a.ui.huge.teal.animated.button
@@ -155,8 +155,8 @@ html
 			window.shader = !{JSON.stringify(shader)}
 			window.config = !{JSON.stringify(config)}
 
-		script(src='/components/jquery/dist/jquery.min.js')
-		script(src='/components/semantic/dist/semantic.min.js')
-		script(src='/components/twgl.js/dist/twgl.min.js')
-		script(src='/js/render.js')
-		script(src='/js/index.js')
+		script(src='/static/components/jquery/dist/jquery.min.js')
+		script(src='/static/components/semantic/dist/semantic.min.js')
+		script(src='/static/components/twgl.js/dist/twgl.min.js')
+		script(src='/static/js/render.js')
+		script(src='/static/js/index.js')
