@@ -19,8 +19,8 @@ html
 		.ui.large.top.fixed.hidden.menu
 			.ui.container
 				a.item.VisbyRoundCF.nav-logo ShaderStudio
-				a.active.item Home
-				a.item Browse
+				a.active.item(href='/') Home
+				a.item(href='/browse') Browse
 				a.item Create
 				a.item Live
 				.item.ui.category.search
@@ -35,8 +35,8 @@ html
 		//- Sidebar Menu
 		.ui.vertical.inverted.sidebar.menu
 			a.item.VisbyRoundCF.nav-logo ShaderStudio
-			a.active.item Home
-			a.item Browse
+			a.active.item(href='/') Home
+			a.item(href='/browse') Browse
 			a.item Live
 			a.item Login
 			.ui.category.search.item
@@ -52,9 +52,9 @@ html
 					.ui.large.secondary.inverted.pointing.menu
 						a.toc.item
 							i.sidebar.icon
-						a.item.VisbyRoundCF.nav-logo ShaderStudio
-						a.active.item Home
-						a.item Browse
+						a.item.VisbyRoundCF.nav-logo(href='/') ShaderStudio
+						a.active.item(href='/') Home
+						a.item(href='/browse') Browse
 						a.item Create
 						a.item Live
 						.ui.category.search.item
@@ -68,7 +68,7 @@ html
 				.ui.text.container
 					h1.ui.inverted.header.VisbyRoundCF Shader Studio
 					h2.VisbyRoundCF Browse, create and share shader online!
-					.ui.huge.primary.button.VisbyRoundCF
+					a.ui.huge.primary.button.VisbyRoundCF(href='/browse')
 						| Browse the gallery
 						i.right.arrow.icon
 
@@ -97,7 +97,7 @@ html
 							a.ui.huge.teal.animated.button
 								.visible.content Create a Shader
 								.hidden.content
-									| Now&nbsp;
+									span.right1char Now
 									i.right.arrow.icon
 			.ui.vertical.stripe.quote.segment
 				.ui.equal.width.stackable.internally.celled.grid

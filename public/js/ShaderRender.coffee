@@ -103,9 +103,9 @@ class ShaderRender
 
 					@samplerToConfig(input.sampler, texConfig)
 					video.addEventListener 'canplay', =>
-						video.width = @videoWidth
-						video.height = @videoHeight
-						video.play()
+						video.width = video.videoWidth
+						video.height = video.videoHeight
+						video.play() if @isStarted
 						@textures[input.channel] = twgl.createTexture(@gl, texConfig)
 						@textureConfigs[input.channel] = texConfig
 						@channelResolutions[input.channel * 3] = @videoWidth

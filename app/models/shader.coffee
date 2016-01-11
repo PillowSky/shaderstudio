@@ -56,7 +56,11 @@ ShaderSchema.statics.findByShaderId = (shaderId, callback)->
 	@findOne({'info.id': shaderId}, callback)
 
 ShaderSchema.statics.select = (condition, sort, skip, limit, callback)->
+	cursor = @find(condition)
+	cursor.count {}, (error, count)->
+		console.log(error, count)
 	@find(condition).sort(sort).skip(skip).limit(limit).exec(callback)
+
 
 ShaderSchema.statics.allId = (callback)->
 	@find({}, {'info.id': 1, _id: 0}).exec (error, docs)->

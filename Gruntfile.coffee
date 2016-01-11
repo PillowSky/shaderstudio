@@ -22,7 +22,6 @@ module.exports = (grunt) ->
 		'public/js/view.js': 'public/js/view.coffee'
 
 	uglifyFiles =
-		'public/js/common.js': 'public/js/common.js'
 		'public/js/render.js': 'public/js/render.js'
 		'public/js/index.js': 'public/js/index.js'
 		'public/js/search.js': 'public/js/search.js'

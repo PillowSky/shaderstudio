@@ -5,18 +5,33 @@ body {
 	color: rgba(255,255,255,.9);
 }
 
-#content {
-	margin-top: 2rem;
+.userlink {
+	color: white;
+	font-weight: bold;
 }
 
-.scene {
-	height: 12rem;
+.ellipsis{
+	display: inline-block;
+	white-space: nowrap;
+	width: ~"calc(100% - 8em)";
+	overflow: hidden;
+	text-overflow:ellipsis;
+}
+
+span.stat {
+	display: inline-block;
+	float: right;
+	white-space: nowrap;
+	overflow: hidden;
 }
 
 canvas.canvas {
 	background-color: black;
-	height: 10rem;
 	width: 100%;
 	cursor: pointer;
-	border-radius: 0.5rem 0.5rem 0 0;
+	border-radius: 2/7rem;
+}
+
+.scene {
+	padding-top: 0 !important;
 }

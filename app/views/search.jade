@@ -10,6 +10,7 @@ html
 		//- Site Properties
 		title ShaderStudio - Search
 		link(rel='stylesheet', href='/components/semantic/dist/semantic.min.css')
+		link(rel='stylesheet' href='/css/common.css')
 		link(rel='stylesheet', href='/css/search.css')
 		link(rel='icon' href='/img/favicon.ico')
 
@@ -17,11 +18,9 @@ html
 		.ui.inverted.vertical.masthead.aligned.segment.interactive
 			.ui.container
 				.ui.large.secondary.inverted.pointing.menu
-					a.toc.item
-						i.sidebar.icon
-					a.item.VisbyRoundCF.nav-logo ShaderStudio
-					a.active.item Home
-					a.item Browse
+					a.item.VisbyRoundCF.nav-logo(href='/') ShaderStudio
+					a.item(href='/') Home
+					a.active.item(href='/browse') Browse
 					a.item Create
 					a.item Live
 					.ui.category.search.item
@@ -32,17 +31,60 @@ html
 					.right.item
 						a.ui.inverted.button Login
 
-			.ui.container#content
-				.ui.four.column.grid
-					each shader, index in shaders
-						.four.wide.column.scene
-							a(href="/view/#{shader.info.id}")
-								canvas.canvas
-							p "#{shader.info.name}" by #{shader.info.username}
-							i.unhide.icon
-							span #{shader.info.viewed}&nbsp;&nbsp;
-							i.heart.icon
-							span #{shader.info.likes}
+			.ui.stackable.two.column.grid.container#control
+				.eight.wide.column
+					span.right1em
+						i.sort.icon
+						| Sort:
+					.ui.buttons.right1em
+						.ui.active.inverted.button View
+						.ui.inverted.button Like
+						.ui.inverted.button Hots
+						.ui.inverted.button Time
+					.ui.icon.buttons
+						.ui.active.inverted.button
+							i.sort.content.descending.icon
+						.ui.inverted.button
+							i.sort.content.ascending.icon
+
+				.eight.wide.column
+					span.right1em
+						i.tags.icon
+						| Tags:
+					.ui.buttons
+						.ui.inverted.button Sound
+						.ui.inverted.button Reality
+						.ui.inverted.button Microphone
+						.ui.inverted.button Camera
+
+			.ui.stackable.four.column.grid.container#content
+				each shader, index in shaders
+					.four.wide.column.scene
+						a(href="/view/#{shader.info.id}")
+							canvas.canvas
+						p
+							span.ellipsis
+								| "#{shader.info.name}"
+								| by
+								a.userlink(href="/user/#{shader.info.username}") #{shader.info.username}
+							span.stat
+								i.unhide.icon
+								span.right1char #{shader.info.viewed}
+								i.heart.icon
+								| #{shader.info.likes}
+
+			.ui.container.center.aligned.top1em
+				.ui.pagination.menu.inverted
+					a.active.item 1
+					a.item(href='/search?page=2') 2
+					a.item 3
+					a.item 4
+					a.item 5
+					a.item 6
+					a.item 7
+					a.item 8
+					a.item 9
+					a.item 10
 
 		script#glslVert(type='x-shader/x-vertex')
 			include glsl/vert.vert

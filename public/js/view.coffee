@@ -52,6 +52,8 @@ $ ->
 	setTimeout ->
 		createShader()
 		startShader()
+		window.imageRender = imageRender
+		window.soundRender = soundRender
 	, 0
 
 	editor = ace.edit("editor");
