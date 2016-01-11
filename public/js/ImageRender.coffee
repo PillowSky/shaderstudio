@@ -52,7 +52,7 @@ class ImageRender extends ShaderRender
 					texConfig?.audio?.resume?()
 					texConfig?.video?.play?()
 			@isStarted = @everStarted = true
-			@render(performance.now())
+			requestAnimationFrame(@render)
 
 	stop: =>
 		if @isStarted

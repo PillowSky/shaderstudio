@@ -13,7 +13,7 @@ class SoundRender extends ShaderRender
 		@audioContext = new AudioContext()
 		@sampleRate = @audioContext.sampleRate
 
-	render: (time = performance.now())=>
+	render: (time)=>
 		# update inputs
 		for texConfig in @textureConfigs
 			texConfig?.update?()
@@ -59,7 +59,7 @@ class SoundRender extends ShaderRender
 		# hack here due to chromium bug#121654
 		console.log(playNode)
 		playNode.onended = =>
-			@render()
+			@render(performance.now())
 
 	start: =>
 		if not @isStarted
@@ -70,7 +70,7 @@ class SoundRender extends ShaderRender
 					texConfig?.audio?.resume?()
 					texConfig?.video?.play?()
 			else
-				@render()
+				requestAnimationFrame(@render)
 			@isStarted = @everStarted = true
 
 	stop: =>

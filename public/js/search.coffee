@@ -1,8 +1,6 @@
 'use strict'
 
 $ ->
-	# create sidebar and attach to menu open
-	$('.ui.sidebar').sidebar 'attach events', '.toc.item'
 	$('.ui.search').search()
 
 	Array.prototype.forEach.call document.querySelectorAll('canvas.canvas'), (canvas, index)->
@@ -53,14 +51,16 @@ $ ->
 			imageRender = null
 			soundRender = null
 
-		setTimeout ->
-			createShader()
-			startShader()
-			stopShader()
-		, 0
-
 		$(canvas).mouseenter ->
 			startShader()
 
 		$(canvas).mouseleave ->
 			stopShader()
+
+		# trick to load shader one by one
+		setTimeout ->
+			createShader()
+			startShader()
+			stopShader()
+			$(canvas).next().remove()
+		, index * 100
