@@ -13,18 +13,21 @@ module.exports = (grunt) ->
 		'public/css/common.css': 'public/css/common.less'
 		'public/css/index.css': 'public/css/index.less'
 		'public/css/search.css': 'public/css/search.less'
+		'public/css/browse.css': 'public/css/browse.less'
 		'public/css/view.css': 'public/css/view.less'
 
 	coffeeFiles =
 		'public/js/render.js': ['public/js/ShaderRender.coffee', 'public/js/ImageRender.coffee', 'public/js/SoundRender.coffee']
 		'public/js/index.js': 'public/js/index.coffee'
 		'public/js/search.js': 'public/js/search.coffee'
+		'public/js/browse.js': 'public/js/browse.coffee'
 		'public/js/view.js': 'public/js/view.coffee'
 
 	uglifyFiles =
 		'public/js/render.js': 'public/js/render.js'
 		'public/js/index.js': 'public/js/index.js'
 		'public/js/search.js': 'public/js/search.js'
+		'public/js/browse.js': 'public/js/browse.js'
 		'public/js/view.js': 'public/js/view.js'
 
 	grunt.initConfig

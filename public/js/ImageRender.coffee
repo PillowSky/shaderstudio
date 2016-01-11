@@ -16,6 +16,9 @@ class ImageRender extends ShaderRender
 		@mouse.mouseup =>
 			@mouse.unbind('mousemove')
 
+		@mouse.mouseleave =>
+			@mouse.unbind('mousemove')
+
 	render: (time)=>
 		twgl.resizeCanvasToDisplaySize(@gl.canvas);
 		@gl.viewport(0, 0, @gl.canvas.width, @gl.canvas.height)

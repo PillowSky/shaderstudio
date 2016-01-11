@@ -58,6 +58,11 @@ ShaderSchema.statics.get = (shaderId, callback)->
 ShaderSchema.statics.select = (criteria, sort, skip, limit, callback)->
 	@find(criteria).sort(sort).skip(skip).limit(limit).exec(callback)
 
+ShaderSchema.statics.selectId = (criteria, sort, callback)->
+	@find(criteria, {'info.id': 1, _id: 0}).sort(sort).exec (error, docs)->
+		callback error, docs.map (doc)->
+			doc.info.id
+
 ShaderSchema.statics.idAll = (callback)->
 	@find({}, {'info.id': 1, _id: 0}).exec (error, docs)->
 		callback error, docs.map (doc)->

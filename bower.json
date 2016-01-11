@@ -3,7 +3,8 @@
 	"version": "0.0.1",
 	"dependencies": {
 		"semantic": "2.x",
-		"twgl.js": "x"
+		"twgl.js": "x",
+		"blueimp-tmpl": "3.x"
 	},
 	"ignore": [
 		"**/.*",
