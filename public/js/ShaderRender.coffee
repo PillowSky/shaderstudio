@@ -6,6 +6,8 @@ navigator.getUserMedia = navigator.getUserMedia or navigator.webkitGetUserMedia 
 class ShaderRender
 	constructor: (@canvas, @mouse, @keyboard, @vert, @frag, @pass, @host) ->
 		@gl = twgl.getWebGLContext(@canvas)
+		@gl.getExtension('OES_standard_derivatives')
+		@gl.getExtension('EXT_shader_texture_lod')
 		@programInfo = null
 		@bufferInfo = null
 		@textures = new Array(4)
