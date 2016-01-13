@@ -36,27 +36,28 @@ module.exports = (app) ->
 		pageItems = 12
 		skip = (page - 1) * pageItems
 		limit = pageItems
+		fuzzyQuery = [{'info.name': {$regex: keyword, $options: 'i'}}, {'info.tags': {$elemMatch: {$regex: keyword, $options: 'i'}}}]
 
 		if filter
 			Filter.get filter, (error, doc)->
 				return next(new Error(error)) if error
 				return next(doc) if not doc
 
-				Shader.count {'info.id': {$in: doc.value}, 'info.name': {$regex: keyword, $options: 'i'}}, (error, total)->
+				Shader.count {'info.id': {$in: doc.value}, $or: fuzzyQuery}, (error, total)->
 					return next(new Error(error)) if error
 					return next(total) if not total
 
-					Shader.query {'info.id': {$in: doc.value}, 'info.name': {$regex: keyword, $options: 'i'}}, order + sort, skip, limit, (error, docs)->
+					Shader.query {'info.id': {$in: doc.value}, $or: fuzzyQuery}, order + sort, skip, limit, (error, docs)->
 						return next(new Error(error)) if error
 						return next(docs) if not docs
 
 						res.render('search', {'shaders': docs, 'config': Config.config, 'pages': Math.ceil(total / pageItems), 'keyword': keyword, 'page': page, 'sort': req.query.sort, 'order': req.query.order, 'filter': req.query.filter})
 		else
-			Shader.count {'info.name': {$regex: keyword, $options: 'i'}}, (error, total)->
+			Shader.count {$or: fuzzyQuery}, (error, total)->
 				return next(new Error(error)) if error
 				return next(total) if not total
 
-				Shader.query {'info.name': {$regex: keyword, $options: 'i'}}, order + sort, skip, limit, (error, docs)->
+				Shader.query {$or: fuzzyQuery}, order + sort, skip, limit, (error, docs)->
 					return next(new Error(error)) if error
 					return next(docs) if not docs
 
