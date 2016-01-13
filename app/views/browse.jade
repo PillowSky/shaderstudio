@@ -42,13 +42,15 @@ html
 				button.ui.icon.inverted.button.right#right
 					i.right.chevron.icon
 
-			.ui.action.input.top1em#goto
-				input(type='number' min=0 step=1)
-				button.ui.icon.button
-					i.right.arrow.icon
-			p.top1em.info
+			p.top1em#info
+			.ui.container.center.aligned.top1em
+				.ui.pagination.menu.inverted#page
+				form.ui.action.input.left1em#goto
+					input(type='number' min='0' step='1' placeholder='Go')
+					button.ui.icon.button(type='submit')
+						i.right.arrow.icon
 
-			.ui.stackable.two.column.grid.container
+			.ui.stackable.two.column.grid.container.top1char
 				.eight.wide.column
 					span.right1em
 						i.sort.icon
@@ -115,7 +117,6 @@ html
 
 		script#tmpl-info(type='text/x-tmpl')
 			span.ellipsis.right1char
-				| No. {%=o.index%}
 				a.userlink.left1char(href="/view/{%=o.id%}") "{%=o.name%}"
 				span.left1char.right1char by
 				a.userlink(href="/user/{%=o.username%}") {%=o.username%}
@@ -124,6 +125,23 @@ html
 				span.right1char {%=o.viewed%}
 				i.heart.icon
 				| {%=o.likes%}
+
+		script#tmpl-page(type='text/x-tmpl')
+			{% for (var i = 1; i <= o.count; i++) { %}
+			{% if (Math.abs(o.index - i) > 3) { %}
+			{% if (i == 1) { %}
+			a.item(href='#{%= i %}') {%= i %}
+			.disabled.item ...
+			{% } else if (i == o.count) { %}
+			.disabled.item ...
+			a.item(href='#{%= i %}') {%= i %}
+			{% } %}
+			{% } else if (i == o.index) { %}
+			a.active.item(href='#{%= i %}') {%= i %}
+			{% } else { %}
+			a.item(href='#{%= i %}') {%= i %}
+			{% } %}
+			{% } %}
 
 		script#glslVert(type='x-shader/x-vertex')
 			include glsl/vert.vert

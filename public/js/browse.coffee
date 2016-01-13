@@ -51,27 +51,33 @@ $ ->
 		imageRender = null
 		soundRender = null
 
-	shiftShader = (offset)->
+	shiftShader = (index)->
 		stopShader()
-		window.shaderIndex += offset
-		window.shaderIndex = window.shaderIds.length - 1 if window.shaderIndex < 0
-		window.shaderIndex = 0 if window.shaderIndex >= window.shaderIds.length
+		window.shaderIndex = index
 
 		$.get "/api/shaders/#{window.shaderIds[window.shaderIndex]}", (data)->
+			data.info.index = window.shaderIndex + 1
+			data.info.count = window.shaderIds.length
+			$('#info').html(tmpl('tmpl-info', data.info))
+			$('#page').html(tmpl('tmpl-page', data.info))
+			$('#goto input').attr('max', window.shaderIds.length)
+
 			#wait for previous shader's render call finished
 			requestAnimationFrame ->
 				window.shader = data
-				data.info.index = window.shaderIndex
-				$('p.info').html(tmpl('tmpl-info', data.info))
 				destroyShader()
 				createShader()
 				startShader()
 
 	$('#left').click ->
-		shiftShader(-1)
+		newIndex = window.shaderIndex - 1
+		newIndex = window.shaderIds.length - 1 if newIndex < 0
+		location.hash = newIndex + 1
 
 	$('#right').click ->
-		shiftShader(1)
+		newIndex = window.shaderIndex + 1
+		newIndex = 0 if newIndex >= window.shaderIds.length
+		location.hash = newIndex + 1
 
 	$('#control').click ->
 		if imageRender?.isStarted or soundRender?.isStarted
@@ -81,11 +87,14 @@ $ ->
 			startShader()
 			$('#control').children('i.icon').removeClass('play').addClass('pause')
 
-	setTimeout ->
-		shiftShader(Math.floor(Math.random() * window.shaderIds.length))
-	, 0
+	$('#goto').submit (event)->
+		location.hash = $('#goto input').val()
+		return false
 
-	$('#goto input').attr('max', window.shaderIds.length - 1).attr('placeholder', "#{window.shaderIds.length} shaders in total")
-	$('#goto button').click ->
-		index = $('#goto > input').val()
-		shiftShader(index - window.shaderIndex) if 0 <= index < window.shaderIds.length
+	# mini router
+	$(window).on 'load hashchange', ->
+		index = parseInt(location.hash[1..]) - 1
+		if 0 <= index < window.shaderIds.length
+			shiftShader(index)
+		else
+			location.hash = Math.floor(Math.random() * window.shaderIds.length) + 1
