@@ -34,7 +34,7 @@ module.exports = (app) ->
 				return next(new Error(error)) if error
 				return next(doc) if not doc
 
-				Shader.selectId {'info.id': {$in: doc.value}}, order + sort, (error, docs)->
+				Shader.queryId {'info.id': {$in: doc.value}}, order + sort, (error, docs)->
 					return next(new Error(error)) if error
 					return next(docs) if not docs
 
@@ -44,7 +44,7 @@ module.exports = (app) ->
 				return next(new Error(error)) if error
 				return next(total) if not total
 
-				Shader.selectId {}, order + sort, (error, docs)->
+				Shader.queryId {}, order + sort, (error, docs)->
 					return next(new Error(error)) if error
 					return next(docs) if not docs
 

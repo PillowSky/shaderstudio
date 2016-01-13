@@ -4,7 +4,7 @@ Shader = require('../models/shader')
 
 module.exports = (app) ->
 	app.get '/api/shaders', (req, res, next) ->
-		Shader.idAll (error, docs)->
+		Shader.allId (error, docs)->
 			return next(new Error(error)) if error
 			res.json({Shaders: docs.length, Results: docs})
 
@@ -15,7 +15,7 @@ module.exports = (app) ->
 			res.json(doc)
 
 	app.get '/api/shaders/query/:queryString', (req, res, next)->
-		Shader.query req.params.queryString, (error, docs)->
+		Shader.queryId {'info.name': {$regex: req.params.queryString, $options: 'i'}}, null, (error, docs)->
 			return next(new Error(error)) if error
 			return next(docs) if not docs
 			res.json(docs)

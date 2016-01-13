@@ -55,20 +55,17 @@ ShaderSchema = new mongoose.Schema({
 ShaderSchema.statics.get = (shaderId, callback)->
 	@findOne({'info.id': shaderId}, callback)
 
-ShaderSchema.statics.select = (criteria, sort, skip, limit, callback)->
+ShaderSchema.statics.query = (criteria, sort, skip, limit, callback)->
 	@find(criteria).sort(sort).skip(skip).limit(limit).exec(callback)
 
-ShaderSchema.statics.selectId = (criteria, sort, callback)->
+ShaderSchema.statics.queryId = (criteria, sort, callback)->
 	@find(criteria, {'info.id': 1, _id: 0}).sort(sort).exec (error, docs)->
 		callback error, docs.map (doc)->
 			doc.info.id
 
-ShaderSchema.statics.idAll = (callback)->
+ShaderSchema.statics.allId = (callback)->
 	@find({}, {'info.id': 1, _id: 0}).exec (error, docs)->
 		callback error, docs.map (doc)->
 			doc.info.id
-
-ShaderSchema.statics.query = (queryString, callback)->
-	@find({'info.name': {$regex: queryString}}, callback)
 
 module.exports = mongoose.model('Shader', ShaderSchema)

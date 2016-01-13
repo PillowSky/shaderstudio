@@ -40,35 +40,35 @@ html
 						if sort == 'view'
 							.ui.active.inverted.button View
 						else
-							a.ui.inverted.button(href="/search?sort=view&order=#{order}&filter=#{filter}") View
+							a.ui.inverted.button(href="/search?keyword=#{keyword}&sort=view&order=#{order}&filter=#{filter}") View
 
 						if sort == 'like'
 							.ui.active.inverted.button Like
 						else
-							a.ui.inverted.button(href="/search?sort=like&order=#{order}&filter=#{filter}") Like
+							a.ui.inverted.button(href="/search?keyword=#{keyword}&sort=like&order=#{order}&filter=#{filter}") Like
 
 						if sort == 'comm'
 							.ui.active.inverted.button Comm
 						else
-							a.ui.inverted.button(href="/search?sort=comm&order=#{order}&filter=#{filter}") Comm
+							a.ui.inverted.button(href="/search?keyword=#{keyword}&sort=comm&order=#{order}&filter=#{filter}") Comm
 
 						if sort == 'date'
 							.ui.active.inverted.button Date
 						else
-							a.ui.inverted.button(href="/search?sort=date&order=#{order}&filter=#{filter}") Date
+							a.ui.inverted.button(href="/search?keyword=#{keyword}&sort=date&order=#{order}&filter=#{filter}") Date
 					.ui.icon.buttons
 						if order == 'desc'
 							.ui.active.inverted.button
 								i.sort.content.descending.icon
 						else
-							a.ui.inverted.button(href="/search?page=#{page}&sort=#{sort}&order=desc&filter=#{filter}")
+							a.ui.inverted.button(href="/search?keyword=#{keyword}&page=#{page}&sort=#{sort}&order=desc&filter=#{filter}")
 								i.sort.content.descending.icon
 
 						if order == 'asc'
 							.ui.active.inverted.button
 								i.sort.content.ascending.icon
 						else
-							a.ui.inverted.button(href="/search?page=#{page}&sort=#{sort}&order=asc&filter=#{filter}")
+							a.ui.inverted.button(href="/search?keyword=#{keyword}&page=#{page}&sort=#{sort}&order=asc&filter=#{filter}")
 								i.sort.content.ascending.icon
 
 
@@ -78,24 +78,24 @@ html
 						| Filter:
 					.ui.buttons
 						if filter == 'gpusound'
-							a.ui.active.inverted.button(href="/browse?sort=#{sort}&order=#{order}") GPU Sound
+							a.ui.active.inverted.button(href="/search?keyword=#{keyword}&sort=#{sort}&order=#{order}") GPU Sound
 						else
-							a.ui.inverted.button(href="/search?sort=#{sort}&order=#{order}&filter=gpusound") GPU Sound
+							a.ui.inverted.button(href="/search?keyword=#{keyword}&sort=#{sort}&order=#{order}&filter=gpusound") GPU Sound
 
 						if filter == 'microphone'
-							a.ui.active.inverted.button(href="/browse?sort=#{sort}&order=#{order}") Microphone
+							a.ui.active.inverted.button(href="/search?keyword=#{keyword}&sort=#{sort}&order=#{order}") Microphone
 						else
-							a.ui.inverted.button(href="/search?sort=#{sort}&order=#{order}&filter=microphone") Microphone
+							a.ui.inverted.button(href="/search?keyword=#{keyword}&sort=#{sort}&order=#{order}&filter=microphone") Microphone
 
 						if filter == 'musicinput'
-							a.ui.active.inverted.button(href="/browse?sort=#{sort}&order=#{order}") Music Input
+							a.ui.active.inverted.button(href="/search?keyword=#{keyword}&sort=#{sort}&order=#{order}") Music Input
 						else
-							a.ui.inverted.button(href="/search?sort=#{sort}&order=#{order}&filter=musicinput") Music Input
+							a.ui.inverted.button(href="/search?keyword=#{keyword}&sort=#{sort}&order=#{order}&filter=musicinput") Music Input
 
 						if filter == 'webcamera'
-							a.ui.active.inverted.button(href="/browse?sort=#{sort}&order=#{order}") Web Camera
+							a.ui.active.inverted.button(href="/search?keyword=#{keyword}&sort=#{sort}&order=#{order}") Web Camera
 						else
-							a.ui.inverted.button(href="/search?sort=#{sort}&order=#{order}&filter=webcamera") Web Camera
+							a.ui.inverted.button(href="/search?keyword=#{keyword}&sort=#{sort}&order=#{order}&filter=webcamera") Web Camera
 
 			.ui.stackable.four.column.grid.container#content
 				each shader, index in shaders
@@ -120,16 +120,17 @@ html
 					while i <= pages
 						if Math.abs(page - i) > 3
 							if i == 1
-								a.item(href="/search?page=#{i}&sort=#{sort}&order=#{order}&filter=#{filter}") #{i}
+								a.item(href="/search?keyword=#{keyword}&page=#{i}&sort=#{sort}&order=#{order}&filter=#{filter}") #{i}
 								.disabled.item ...
 							else if i == pages
 								.disabled.item ...
-								a.item(href="/search?page=#{i}&sort=#{sort}&order=#{order}&filter=#{filter}") #{i}
+								a.item(href="/search?keyword=#{keyword}&page=#{i}&sort=#{sort}&order=#{order}&filter=#{filter}") #{i}
 						else if	i == page
 							a.active.item #{i}
 						else
-							a.item(href="/search?page=#{i}&sort=#{sort}&order=#{order}&filter=#{filter}") #{i}
+							a.item(href="/search?keyword=#{keyword}&page=#{i}&sort=#{sort}&order=#{order}&filter=#{filter}") #{i}
 						- i++
+
 		script#glslVert(type='x-shader/x-vertex')
 			include glsl/vert.vert
 

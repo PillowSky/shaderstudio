@@ -21,17 +21,19 @@ module.exports = (app) ->
 		'webcamera': 'webcamera'
 
 	app.get '/search', (req, res, next) ->
-		page = parseInt(req.query.page) || 1
-		pageItems = 12
-
+		req.query.keyword ?= ''
+		req.query.page ?= 1
 		req.query.sort ?= 'view'
 		req.query.order ?= 'desc'
 		req.query.filter ?= ''
 
+		keyword = req.query.keyword
+		page = parseInt(req.query.page)
 		sort = sortMap[req.query.sort]
 		order = orderMap[req.query.order]
 		filter = filterMap[req.query.filter]
 
+		pageItems = 12
 		skip = (page - 1) * pageItems
 		limit = pageItems
 
@@ -40,18 +42,22 @@ module.exports = (app) ->
 				return next(new Error(error)) if error
 				return next(doc) if not doc
 
-				Shader.select {'info.id': {$in: doc.value}}, order + sort, skip, limit, (error, docs)->
+				Shader.count {'info.id': {$in: doc.value}, 'info.name': {$regex: keyword, $options: 'i'}}, (error, total)->
 					return next(new Error(error)) if error
-					return next(docs) if not docs
+					return next(total) if not total
 
-					res.render('search', {'shaders': docs, 'config': Config.config, 'pages': Math.ceil(doc.value.length / pageItems), 'page': page, 'sort': req.query.sort, 'order': req.query.order, 'filter': req.query.filter})
+					Shader.query {'info.id': {$in: doc.value}, 'info.name': {$regex: keyword, $options: 'i'}}, order + sort, skip, limit, (error, docs)->
+						return next(new Error(error)) if error
+						return next(docs) if not docs
+
+						res.render('search', {'shaders': docs, 'config': Config.config, 'pages': Math.ceil(total / pageItems), 'keyword': keyword, 'page': page, 'sort': req.query.sort, 'order': req.query.order, 'filter': req.query.filter})
 		else
-			Shader.count {}, (error, total)->
+			Shader.count {'info.name': {$regex: keyword, $options: 'i'}}, (error, total)->
 				return next(new Error(error)) if error
 				return next(total) if not total
 
-				Shader.select {}, order + sort, skip, limit, (error, docs)->
+				Shader.query {'info.name': {$regex: keyword, $options: 'i'}}, order + sort, skip, limit, (error, docs)->
 					return next(new Error(error)) if error
 					return next(docs) if not docs
 
-					res.render('search', {'shaders': docs, 'config': Config.config, 'pages': Math.ceil(total / pageItems), 'page': page, 'sort': req.query.sort, 'order': req.query.order, 'filter': req.query.filter})
+					res.render('search', {'shaders': docs, 'config': Config.config, 'pages': Math.ceil(total / pageItems), 'keyword': keyword, 'page': page, 'sort': req.query.sort, 'order': req.query.order, 'filter': req.query.filter})
