@@ -25,7 +25,8 @@ class ShaderRender
 		@pass.inputs.forEach (input)=>
 			switch input.ctype
 				when 'texture', 'cubemap'
-					texConfig = {}
+					texConfig =
+						crossOrigin: 'anonymous'
 
 					if input.ctype == 'texture'
 						texConfig.src = @host + input.src
@@ -51,6 +52,7 @@ class ShaderRender
 
 					if input.ctype == 'music'
 						audio = new Audio()
+						audio.crossOrigin = 'anonymous'
 						audio.src = @host + input.src
 						audio.autoplay = true
 						audio.loop = true
@@ -88,6 +90,7 @@ class ShaderRender
 					video = document.createElement('video')
 
 					if input.ctype == 'video'
+						video.crossOrigin = 'anonymous'
 						video.src = @host + input.src
 						video.loop = true
 					else
