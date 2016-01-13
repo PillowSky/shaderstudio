@@ -1,8 +1,34 @@
 'use strict'
 
 $ ->
+	class InfoRender
+		constructor: (@playback, @framerate)->
+			@isStarted = false
+			@timestamp = 0
+			@laststamp = 0
+			@lastsecond = 0
+
+		render: (time = performance.now()) =>
+			playsecond = (time - @timestamp) / 1000
+			@playback.text("#{playsecond.toFixed(1)}s")
+			@framerate.text("#{(6 / (playsecond - @lastsecond)).toFixed(1)} fps")
+			@lastsecond = playsecond
+			setTimeout(@render, 100) if @isStarted
+
+		start: =>
+			if not @isStarted
+				@timestamp = performance.now() - @laststamp
+				@isStarted = true
+				requestAnimationFrame(@render)
+
+		stop: =>
+			if @isStarted
+				@laststamp = performance.now() - @timestamp
+				@isStarted = false
+
 	imageRender = null
 	soundRender = null
+	infoRender = new InfoRender($('#playback'), $('#framerate'))
 
 	createShader = ->
 		window.shader.renderpass.forEach (pass)->
@@ -40,21 +66,49 @@ $ ->
 	startShader = ->
 		imageRender?.start()
 		soundRender?.start()
+		infoRender.start()
 
 	stopShader = ->
 		imageRender?.stop()
 		soundRender?.stop()
-
-	destroyShader = ->
-		imageRender = null
-		soundRender = null
+		infoRender.stop()
 
 	setTimeout ->
 		createShader()
 		startShader()
 		window.imageRender = imageRender
 		window.soundRender = soundRender
+		window.infoRender = infoRender
 	, 0
+
+
+	$('#backward').click ->
+		now = performance.now()
+		imageRender?.timestamp = now
+		imageRender?.laststamp = now
+		soundRender?.timestamp = now
+		soundRender?.laststamp = now
+		infoRender.timestamp = now
+		infoRender.laststamp = now
+
+	$('#switch').click ->
+		if infoRender.isStarted
+			stopShader()
+			$(this).removeClass('pause').addClass('play')
+		else
+			startShader()
+			$(this).removeClass('play').addClass('pause')
+
+	$('#fullscreen').click ->
+		canvas = document.querySelector('#canvas')
+		if canvas.requestFullscreen
+			canvas.requestFullscreen()
+		else if canvas.webkitRequestFullscreen
+			canvas.webkitRequestFullscreen()
+		else if canvas.mozRequestFullScreen
+			canvas.mozRequestFullScreen()
+		else if canvas.msRequestFullscreen
+			canvas.msRequestFullscreen()
 
 	editor = ace.edit("editor");
 	editor.setTheme("ace/theme/twilight");

@@ -18,8 +18,6 @@ html
 		.ui.inverted.vertical.masthead.aligned.segment.interactive
 			.ui.container
 				.ui.large.secondary.inverted.pointing.menu
-					a.toc.item
-						i.sidebar.icon
 					a.item.VisbyRoundCF.nav-logo(href='/') ShaderStudio
 					a.item(href='/') Home
 					a.item(href='/browse') Browse
@@ -33,15 +31,16 @@ html
 					.right.item
 						a.ui.inverted.button Login
 
-			.ui.stackable.grid.container#content
+			.ui.stackable.grid.container.top1em
 				.eight.wide.column#left
-					.row#canvasWrapper
+					.row
 						canvas#canvas
-						i.backward.icon.right1em
-						i.pause.icon.right1em
-						span.right1em 0s
-						span.right1em 60FPS
-						i.maximize.icon
+					.row#control
+						i.step.backward.icon.right1em.left1em.pointer#backward
+						i.pause.icon.right1em.pointer#switch
+						span.right1em#playback 0.0s
+						span.right1em#framerate 60.0 fps
+						i.maximize.icon.right.float-right.right1em.pointer#fullscreen
 					.row.note
 						h1 #{shader.info.name}
 					.row.float-right
