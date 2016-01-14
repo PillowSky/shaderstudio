@@ -16,5 +16,5 @@ module.exports = (app) ->
 					if error
 						res.render('register', {error: error})
 					else
-						res.cookie('user', u, {expires: new Date(Date.now() + 86400)})
+						res.cookie('user', u, {maxAge: 86400000})
 						res.redirect('/')

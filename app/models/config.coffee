@@ -4,7 +4,6 @@ assert = require('assert')
 mongoose = require('../services/mongoose')
 
 ConfigSchema = new mongoose.Schema({
-	_id: mongoose.Schema.ObjectId
 	key: String
 	value: mongoose.Schema.Types.Mixed
 })

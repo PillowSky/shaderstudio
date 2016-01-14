@@ -64,60 +64,15 @@ html
 							a.ui.tag.small.label.bottom1char(href="/search?keyword=#{tag}") #{tag}
 					.row.top1em
 						p !{shader.info.description}
-					.row.top2em.inverted.ui.comments#comments
-						h3.ui.dividing.header Comments
-						.comment
-							a.avatar
-								img(src='/images/avatar/small/matt.jpg')
-							.content
-								a.author Matt
-								.metadata
-									span.date Today at 5:42PM
-								.text
-									| How artistic!
-								.actions
-									a.reply Reply
-						.comment
-							a.avatar
-								img(src='/images/avatar/small/elliot.jpg')
-							.content
-								a.author Elliot Fu
-								.metadata
-									span.date Yesterday at 12:30AM
-								.text
-									p This has been very useful for my research. Thanks as well!
-								.actions
-									a.reply Reply
-							.comments
-								.comment
-									a.avatar
-										img(src='/images/avatar/small/jenny.jpg')
-									.content
-										a.author Jenny Hess
-										.metadata
-											span.date Just now
-										.text
-											| Elliot you are always so right :)
-										.actions
-											a.reply Reply
-						.comment
-							a.avatar
-								img(src='/images/avatar/small/joe.jpg')
-							.content
-								a.author Joe Henderson
-								.metadata
-									span.date 5 days ago
-								.text
-									| Dude, this is awesome. Thanks so much
-								.actions
-									a.reply Reply
+					.row.top2em.ui.comments#comments
+						h3.ui.header Comments
+						#board
 						form.ui.reply.form
 							.field
 								textarea
-							.ui.blue.labeled.submit.icon.button
+							button.ui.blue.labeled.submit.icon.button(type='submit')
 								i.icon.edit
-								|  Add Reply
-
+								|  Reply
 
 				.eight.wide.column#right
 					.ui.top.attached.tabular.menu.inverted.border0
@@ -162,6 +117,16 @@ html
 										i.add.circle.icon
 										| Click To Enable Sound Shader
 
+		script#tmpl-comment(type='text/x-tmpl')
+			{% for (var i = 0; i < o.comments.length; i++) { %}
+			.comment
+				.content
+					a.author {%= o.comments[i].username %}
+					.metadata
+						span.date {%= o.comments[i].date %}
+					.text {%= o.comments[i].comment %}
+			{% } %}
+
 		script#glslVert(type='x-shader/x-vertex')
 			include glsl/vert.vert
 
@@ -180,5 +145,6 @@ html
 		script(src='/static/components/twgl.js/dist/twgl.min.js')
 		script(src='/static/components/ace-builds/src-min/ace.js')
 		script(src='/static/components/highlight/highlight.pack.js')
+		script(src='/static/components/blueimp-tmpl/js/tmpl.min.js')
 		script(src='/static/js/render.js')
 		script(src='/static/js/view.js')

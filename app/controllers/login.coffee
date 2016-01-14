@@ -19,5 +19,5 @@ module.exports = (app) ->
 					else if not success
 						res.render('login', {error: 'Invalid password'})
 					else
-						res.cookie('user', user, {expires: new Date(Date.now() + 86400)})
+						res.cookie('user', user, {maxAge: 86400000})
 						res.redirect('/')

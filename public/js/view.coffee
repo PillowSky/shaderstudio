@@ -139,6 +139,8 @@ $ ->
 
 	$('#run').click ->
 		stopShader()
+
+		#TODO: support add and reduce pass
 		window.shader.renderpass.forEach (pass)->
 			switch pass.type
 				when 'image'
@@ -152,3 +154,13 @@ $ ->
 			destroyShader()
 			createShader()
 			startShader()
+
+	$.get "/comment/#{window.shader.info.id}", (data)->
+		$('#board').html(tmpl('tmpl-comment', data))
+
+	$('form.reply.form').submit (event)->
+		comment = $(this).find('textarea').val()
+		$.post "/comment/#{window.shader.info.id}", {comment: comment}, (data)->
+			$.get "/comment/#{window.shader.info.id}", (data)->
+				$('#board').html(tmpl('tmpl-comment', data))
+		return false

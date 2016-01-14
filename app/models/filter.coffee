@@ -3,7 +3,6 @@
 mongoose = require('../services/mongoose')
 
 FilterSchema = new mongoose.Schema({
-	_id: mongoose.Schema.ObjectId
 	key: String
 	value: [String]
 })
