@@ -10,7 +10,6 @@ $ ->
 
 	# create sidebar and attach to menu open
 	$('.ui.sidebar').sidebar 'attach events', '.toc.item'
-	$('.ui.search').search()
 
 	imageRender = null
 	soundRender = null
@@ -88,6 +87,10 @@ $ ->
 		else
 			startShader()
 			$('#control').children('i.icon').removeClass('play').addClass('pause')
+
+	$('.searchbutton').click ->
+		keyword = $(this).prev().val()
+		location.href = "/search?keyword=#{keyword}"
 
 	setTimeout ->
 		createShader()

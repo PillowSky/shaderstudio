@@ -41,24 +41,19 @@ module.exports = (app) ->
 		if filter
 			Filter.get filter, (error, doc)->
 				return next(new Error(error)) if error
-				return next(doc) if not doc
 
 				Shader.count {'info.id': {$in: doc.value}, $or: fuzzyQuery}, (error, total)->
 					return next(new Error(error)) if error
-					return next(total) if not total
 
 					Shader.query {'info.id': {$in: doc.value}, $or: fuzzyQuery}, order + sort, skip, limit, (error, docs)->
 						return next(new Error(error)) if error
-						return next(docs) if not docs
 
-						res.render('search', {'shaders': docs, 'config': Config.config, 'pages': Math.ceil(total / pageItems), 'keyword': keyword, 'page': page, 'sort': req.query.sort, 'order': req.query.order, 'filter': req.query.filter})
+						res.render('search', {'shaders': docs, 'config': Config.config, 'user': req.cookies.user, 'pages': Math.ceil(total / pageItems), 'keyword': keyword, 'page': page, 'sort': req.query.sort, 'order': req.query.order, 'filter': req.query.filter})
 		else
 			Shader.count {$or: fuzzyQuery}, (error, total)->
 				return next(new Error(error)) if error
-				return next(total) if not total
 
 				Shader.query {$or: fuzzyQuery}, order + sort, skip, limit, (error, docs)->
 					return next(new Error(error)) if error
-					return next(docs) if not docs
 
-					res.render('search', {'shaders': docs, 'config': Config.config, 'pages': Math.ceil(total / pageItems), 'keyword': keyword, 'page': page, 'sort': req.query.sort, 'order': req.query.order, 'filter': req.query.filter})
+					res.render('search', {'shaders': docs, 'config': Config.config, 'user': req.cookies.user, 'pages': Math.ceil(total / pageItems), 'keyword': keyword, 'page': page, 'sort': req.query.sort, 'order': req.query.order, 'filter': req.query.filter})

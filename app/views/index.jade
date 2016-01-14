@@ -26,12 +26,12 @@ html
 				.item.ui.category.search
 					.ui.icon.input
 						input.prompt(type='text' placeholder='Search ShaderStudio')
-						i.search.link.icon
+						i.search.link.icon.searchbutton
 					.results
 				.right.menu
 					.item
 						if user
-							a.ui.button(href='/user/#{user.username}') #{user.username}
+							a.ui.button #{user.username}
 						else
 							a.ui.button(href='/login') Login
 
@@ -42,13 +42,13 @@ html
 			a.item(href='/browse') Browse
 			a.item Live
 			if user
-				a.item(href='/user/#{user.username}') #{user.username}
+				a.item #{user.username}
 			else
 				a.item(href='/login') Login
 			.ui.category.search.item
 				.ui.icon.input
 					input.prompt(type='text', placeholder='Search ShaderStudio')
-					i.search.link.icon
+					i.search.link.icon.searchbutton
 				.results
 
 		//- Page Contents
@@ -61,16 +61,16 @@ html
 						a.item.VisbyRoundCF.nav-logo(href='/') ShaderStudio
 						a.active.item(href='/') Home
 						a.item(href='/browse') Browse
-						a.item(href='/create') Create
-						a.item(href='/live') Live
+						a.item(href='#') Create
+						a.item(href='#') Live
 						.ui.category.search.item
 							.ui.icon.input
 								input.prompt(type='text', placeholder='Search ShaderStudio')
-								i.search.link.icon
+								i.search.link.icon.searchbutton
 							.results
 						.right.item
 							if user
-								a.ui.inverted.button(href='/user/#{user.username}') #{user.username}
+								a.ui.inverted.button #{user.username}
 							else
 								a.ui.inverted.button(href='/login') Login
 				canvas#canvas
@@ -103,7 +103,7 @@ html
 							img.ui.large.bordered.rounded.image(src='/static/img/white-image.png')
 					.row
 						.center.aligned.column
-							a.ui.huge.teal.animated.button
+							a.ui.huge.teal.animated.button(href='/browse')
 								.visible.content Create a Shader
 								.hidden.content
 									| Now

@@ -32,11 +32,12 @@ $ ->
 
 	imageRender = null
 	soundRender = null
-	infoRender = new InfoRender($('#playback'), $('#framerate'))
+	infoRender = null
 	imageEditor = null
 	soundEditor = null
 
 	createShader = ->
+		infoRender = new InfoRender($('#playback'), $('#framerate'))
 		window.shader.renderpass.forEach (pass)->
 			switch pass.type
 				when 'image'
@@ -164,3 +165,7 @@ $ ->
 			$.get "/comment/#{window.shader.info.id}", (data)->
 				$('#board').html(tmpl('tmpl-comment', data))
 		return false
+
+	$('.searchbutton').click ->
+		keyword = $(this).prev().val()
+		location.href = "/search?keyword=#{keyword}"

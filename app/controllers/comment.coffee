@@ -14,6 +14,8 @@ module.exports = (app) ->
 			username: req.cookies.user.username
 			comment: req.body.comment
 
-		Comment.findOneAndUpdate({shader: req.params.shaderId}, {$addToSet: {comments: comment}}, {upsert: true}).exec (error, doc)->
-			console.log(error, doc)
-			res.end()
+		Comment.findOneAndUpdate({shader: req.params.shaderId}, {$addToSet: {comments: comment}}, {upsert: true}).exec (error)->
+			if error
+				res.status(500).json(error)
+			else
+				res.end()

@@ -11,11 +11,9 @@ module.exports = (app) ->
 	app.get '/api/shaders/:shaderId', (req, res, next)->
 		Shader.get req.params.shaderId, (error, doc)->
 			return next(new Error(error)) if error
-			return next(doc) if not doc
 			res.json(doc)
 
 	app.get '/api/shaders/query/:queryString', (req, res, next)->
 		Shader.queryId {'info.name': {$regex: req.params.queryString, $options: 'i'}}, null, (error, docs)->
 			return next(new Error(error)) if error
-			return next(docs) if not docs
 			res.json(docs)

@@ -35,16 +35,13 @@ module.exports = (app) ->
 		if filter
 			Filter.get filter, (error, doc)->
 				return next(new Error(error)) if error
-				return next(doc) if not doc
 
 				Shader.queryId {'info.id': {$in: doc.value}, $or: fuzzyQuery}, order + sort, (error, docs)->
 					return next(new Error(error)) if error
-					return next(docs) if not docs
 
-					res.render('browse', {'shaderIds': docs, 'config': Config.config, 'keyword': keyword, 'sort': req.query.sort, 'order': req.query.order, 'filter': req.query.filter})
+					res.render('browse', {'shaderIds': docs, 'config': Config.config, 'user': req.cookies.user, 'keyword': keyword, 'sort': req.query.sort, 'order': req.query.order, 'filter': req.query.filter})
 		else
 			Shader.queryId {$or: fuzzyQuery}, order + sort, (error, docs)->
 				return next(new Error(error)) if error
-				return next(docs) if not docs
 
-				res.render('browse', {'shaderIds': docs, 'config': Config.config, 'keyword': keyword, 'sort': req.query.sort, 'order': req.query.order, 'filter': req.query.filter})
+				res.render('browse', {'shaderIds': docs, 'config': Config.config, 'user': req.cookies.user, 'keyword': keyword, 'sort': req.query.sort, 'order': req.query.order, 'filter': req.query.filter})

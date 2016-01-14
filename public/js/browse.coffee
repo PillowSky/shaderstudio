@@ -1,8 +1,6 @@
 'use strict'
 
 $ ->
-	$('.ui.search').search()
-
 	imageRender = null
 	soundRender = null
 
@@ -90,6 +88,10 @@ $ ->
 	$('#goto').submit (event)->
 		location.hash = $('#goto input').val()
 		return false
+
+	$('.searchbutton').click ->
+		keyword = $(this).prev().val()
+		location.href = "/search?keyword=#{keyword}"
 
 	# mini router
 	$(window).on 'load hashchange', ->

@@ -21,15 +21,18 @@ html
 					a.item.VisbyRoundCF.nav-logo(href='/') ShaderStudio
 					a.item(href='/') Home
 					a.active.item(href='/browse') Browse
-					a.item(href='/create') Create
-					a.item(href='/live') Live
+					a.item(href='#') Create
+					a.item(href='#') Live
 					.ui.category.search.item
 						.ui.icon.input
 							input.prompt(type='text', placeholder='Search ShaderStudio')
-							i.search.link.icon
+							i.search.link.icon.searchbutton
 						.results
 					.right.item
-						a.ui.inverted.button Login
+						if user
+							a.ui.inverted.button #{user.username}
+						else
+							a.ui.inverted.button(href='/login') Login
 
 			.ui.stackable.two.column.grid.container.top1em
 				.eight.wide.column

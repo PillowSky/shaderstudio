@@ -8,6 +8,5 @@ module.exports = (app) ->
 		shaderId = req.params.shaderId
 		Shader.get shaderId, (error, doc)->
 			return next(new Error(error)) if error
-			return next(doc) if not doc
 
-			res.render('view', {'shader': doc, 'config': Config.config})
+			res.render('view', {'shader': doc, 'config': Config.config, 'user': req.cookies.user})

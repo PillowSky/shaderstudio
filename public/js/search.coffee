@@ -1,8 +1,6 @@
 'use strict'
 
 $ ->
-	$('.ui.search').search()
-
 	Array.prototype.forEach.call document.querySelectorAll('canvas.canvas'), (canvas, index)->
 		imageRender = null
 		soundRender = null
@@ -64,3 +62,7 @@ $ ->
 			stopShader()
 			$(canvas).next().remove()
 		, index * 100
+
+	$('.searchbutton').click ->
+		keyword = $(this).prev().val()
+		location.href = "/search?keyword=#{keyword}"
