@@ -41,22 +41,82 @@ html
 						span.right1em#playback 0.0s
 						span.right1em#framerate 60.0 fps
 						i.maximize.icon.right.float-right.right1em.pointer#fullscreen
-					.row.note
+					.row.top1em
 						h1 #{shader.info.name}
-					.row.float-right
-						i.unhide.icon
-						span.right1em #{shader.info.viewed}
-						i.heart.icon
-						span #{shader.info.likes}
+					.row.float-right.align-right
+						p
+							i.unhide.icon
+							span.right1em #{shader.info.viewed}
+							i.empty.heart.icon
+							span #{shader.info.likes}
+						p.onehalf
+							i.share.alternate.icon
+							i.heart.icon
+					.row.bottom1char
+						p
+							| Uploaded by
+							a.right1char.left1char.userlink(href="/user/#{shader.info.username}") #{shader.info.username}
+							| on #{shader.info.date.toDateString()}
 					.row
-						p Tags: #{shader.info.tags.join(', ')}
-					.row
-						p #{shader.info.description}
-					.row
-						p Uploaded by #{shader.info.username} on #{new Date(shader.info.date).toDateString()}
-					br
-					br
-					.row Comments
+						Span.right1em Tags:
+						each tag in shader.info.tags
+							a.ui.tag.small.label.bottom1char(href="/search?keyword=#{tag}") #{tag}
+					.row.top1em
+						p !{shader.info.description}
+					.row.top2em.inverted.ui.comments#comments
+						h3.ui.dividing.header Comments
+						.comment
+							a.avatar
+								img(src='/images/avatar/small/matt.jpg')
+							.content
+								a.author Matt
+								.metadata
+									span.date Today at 5:42PM
+								.text
+									| How artistic!
+								.actions
+									a.reply Reply
+						.comment
+							a.avatar
+								img(src='/images/avatar/small/elliot.jpg')
+							.content
+								a.author Elliot Fu
+								.metadata
+									span.date Yesterday at 12:30AM
+								.text
+									p This has been very useful for my research. Thanks as well!
+								.actions
+									a.reply Reply
+							.comments
+								.comment
+									a.avatar
+										img(src='/images/avatar/small/jenny.jpg')
+									.content
+										a.author Jenny Hess
+										.metadata
+											span.date Just now
+										.text
+											| Elliot you are always so right :)
+										.actions
+											a.reply Reply
+						.comment
+							a.avatar
+								img(src='/images/avatar/small/joe.jpg')
+							.content
+								a.author Joe Henderson
+								.metadata
+									span.date 5 days ago
+								.text
+									| Dude, this is awesome. Thanks so much
+								.actions
+									a.reply Reply
+						form.ui.reply.form
+							.field
+								textarea
+							.ui.blue.labeled.submit.icon.button
+								i.icon.edit
+								|  Add Reply
+
 
 				.eight.wide.column#right
 					pre#editor

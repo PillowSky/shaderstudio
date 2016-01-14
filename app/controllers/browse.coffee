@@ -21,31 +21,30 @@ module.exports = (app) ->
 		'webcamera': 'webcamera'
 
 	app.get '/browse', (req, res, next) ->
+		req.query.keyword ?= ''
 		req.query.sort ?= 'view'
 		req.query.order ?= 'desc'
 		req.query.filter ?= ''
 
+		keyword = req.query.keyword
 		sort = sortMap[req.query.sort]
 		order = orderMap[req.query.order]
 		filter = filterMap[req.query.filter]
+		fuzzyQuery = [{'info.name': {$regex: keyword, $options: 'i'}}, {'info.tags': {$elemMatch: {$regex: keyword, $options: 'i'}}}]
 
 		if filter
 			Filter.get filter, (error, doc)->
 				return next(new Error(error)) if error
 				return next(doc) if not doc
 
-				Shader.queryId {'info.id': {$in: doc.value}}, order + sort, (error, docs)->
+				Shader.queryId {'info.id': {$in: doc.value}, $or: fuzzyQuery}, order + sort, (error, docs)->
 					return next(new Error(error)) if error
 					return next(docs) if not docs
 
-					res.render('browse', {'shaderIds': docs, 'config': Config.config, 'sort': req.query.sort, 'order': req.query.order, 'filter': req.query.filter})
+					res.render('browse', {'shaderIds': docs, 'config': Config.config, 'keyword': keyword, 'sort': req.query.sort, 'order': req.query.order, 'filter': req.query.filter})
 		else
-			Shader.count {}, (error, total)->
+			Shader.queryId {$or: fuzzyQuery}, order + sort, (error, docs)->
 				return next(new Error(error)) if error
-				return next(total) if not total
+				return next(docs) if not docs
 
-				Shader.queryId {}, order + sort, (error, docs)->
-					return next(new Error(error)) if error
-					return next(docs) if not docs
-
-					res.render('browse', {'shaderIds': docs, 'config': Config.config, 'sort': req.query.sort, 'order': req.query.order, 'filter': req.query.filter})
+				res.render('browse', {'shaderIds': docs, 'config': Config.config, 'keyword': keyword, 'sort': req.query.sort, 'order': req.query.order, 'filter': req.query.filter})
