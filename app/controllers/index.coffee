@@ -12,4 +12,4 @@ module.exports = (app) ->
 			return next(new Error(error)) if error
 			return next(doc) if not doc
 
-			res.render('index', {'shader': doc, 'config': Config.config})
+			res.render('index', {'shader': doc, 'config': Config.config, 'user': req.cookies.user})

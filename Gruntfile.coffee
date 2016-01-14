@@ -15,6 +15,8 @@ module.exports = (grunt) ->
 		'public/css/search.css': 'public/css/search.less'
 		'public/css/browse.css': 'public/css/browse.less'
 		'public/css/view.css': 'public/css/view.less'
+		'public/css/login.css': 'public/css/login.less'
+		'public/css/register.css': 'public/css/register.less'
 
 	coffeeFiles =
 		'public/js/render.js': ['public/js/ShaderRender.coffee', 'public/js/ImageRender.coffee', 'public/js/SoundRender.coffee']
@@ -22,6 +24,8 @@ module.exports = (grunt) ->
 		'public/js/search.js': 'public/js/search.coffee'
 		'public/js/browse.js': 'public/js/browse.coffee'
 		'public/js/view.js': 'public/js/view.coffee'
+		'public/js/login.js': 'public/js/login.coffee'
+		'public/js/register.js': 'public/js/register.coffee'
 
 	uglifyFiles =
 		'public/js/render.js': 'public/js/render.js'
@@ -29,6 +33,8 @@ module.exports = (grunt) ->
 		'public/js/search.js': 'public/js/search.js'
 		'public/js/browse.js': 'public/js/browse.js'
 		'public/js/view.js': 'public/js/view.js'
+		'public/js/login.js': 'public/js/login.js'
+		'public/js/register.js': 'public/js/register.js'
 
 	grunt.initConfig
 		pkg:

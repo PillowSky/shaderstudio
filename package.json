@@ -22,7 +22,8 @@
 		"jimp": "x",
 		"async": "1.x",
 		"mongoose": "4.x",
-		"request": "2.x"
+		"request": "2.x",
+		"bcrypt": "0.8.x"
 	},
 	"devDependencies": {
 		"grunt": "x",

@@ -30,7 +30,10 @@ html
 					.results
 				.right.menu
 					.item
-						a.ui.button Login
+						if user
+							a.ui.button(href='/user/#{user.username}') #{user.username}
+						else
+							a.ui.button(href='/login') Login
 
 		//- Sidebar Menu
 		.ui.vertical.inverted.sidebar.menu
@@ -38,7 +41,10 @@ html
 			a.active.item(href='/') Home
 			a.item(href='/browse') Browse
 			a.item Live
-			a.item Login
+			if user
+				a.item(href='/user/#{user.username}') #{user.username}
+			else
+				a.item(href='/login') Login
 			.ui.category.search.item
 				.ui.icon.input
 					input.prompt(type='text', placeholder='Search ShaderStudio')
@@ -63,7 +69,10 @@ html
 								i.search.link.icon
 							.results
 						.right.item
-							a.ui.inverted.button Login
+							if user
+								a.ui.inverted.button(href='/user/#{user.username}') #{user.username}
+							else
+								a.ui.inverted.button(href='/login') Login
 				canvas#canvas
 				.ui.text.container
 					h1.ui.inverted.header.VisbyRoundCF Shader Studio
