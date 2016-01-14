@@ -32,13 +32,34 @@ canvas#canvas {
 	background-color: #0d3349;
 }
 
-#editor {
+#imageEditor {
 	margin: 0;
 	position: absolute;
 	top: 0;
 	bottom: 0;
 	left: 0;
 	right: 0;
+	input.ace_search_field {
+		color: black;
+	}
+	* {
+		border: 0 !important;
+	}
+}
+
+#soundEditor {
+	margin: 0;
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	input.ace_search_field {
+		color: black;
+	}
+	* {
+		border: 0 !important;
+	}
 }
 
 .masthead.segment {
@@ -50,4 +71,15 @@ canvas#canvas {
 	* {
 		color: white;
 	}
+}
+
+#tooltip {
+	background-color: #0d3349;
+	padding: 0 1rem;
+}
+
+#pre {
+	font-size: 0.8rem;
+	line-height: 1rem;
+	margin-top: -0.5rem;
 }

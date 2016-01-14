@@ -1,6 +1,10 @@
 'use strict'
 
 $ ->
+	$('.menu .item').tab()
+	$('.ui.accordion').accordion()
+	hljs.initHighlightingOnLoad()
+
 	class InfoRender
 		constructor: (@playback, @framerate)->
 			@isStarted = false
@@ -29,6 +33,8 @@ $ ->
 	imageRender = null
 	soundRender = null
 	infoRender = new InfoRender($('#playback'), $('#framerate'))
+	imageEditor = null
+	soundEditor = null
 
 	createShader = ->
 		window.shader.renderpass.forEach (pass)->
@@ -73,14 +79,35 @@ $ ->
 		soundRender?.stop()
 		infoRender.stop()
 
+	destroyShader = ->
+		imageRender = null
+		soundRender = null
+
 	setTimeout ->
 		createShader()
 		startShader()
 		window.imageRender = imageRender
 		window.soundRender = soundRender
 		window.infoRender = infoRender
-	, 0
 
+		if imageRender
+			$('#imageEditor').text(imageRender.pass.code)
+		else
+			$('#imageEditor').parent().dimmer('show')
+
+		if soundRender
+			$('#soundEditor').text(soundRender.pass.code)
+		else
+			$('#soundEditor').parent().dimmer('show')
+
+		imageEditor = ace.edit('imageEditor')
+		imageEditor.setTheme('ace/theme/twilight')
+		imageEditor.session.setMode('ace/mode/glsl')
+
+		soundEditor = ace.edit('soundEditor')
+		soundEditor.setTheme('ace/theme/twilight')
+		soundEditor.session.setMode('ace/mode/glsl')
+	, 0
 
 	$('#backward').click ->
 		now = performance.now()
@@ -110,7 +137,18 @@ $ ->
 		else if canvas.msRequestFullscreen
 			canvas.msRequestFullscreen()
 
-	editor = ace.edit("editor");
-	editor.setTheme("ace/theme/twilight");
-	editor.session.setMode("ace/mode/glsl");
+	$('#run').click ->
+		stopShader()
+		window.shader.renderpass.forEach (pass)->
+			switch pass.type
+				when 'image'
+					pass.code = imageEditor.getValue()
+				when 'sound'
+					pass.code = soundEditor.getValue()
+				else
+					console.log("Pass ignored: #{pass.type}", pass)
 
+		requestAnimationFrame ->
+			destroyShader()
+			createShader()
+			startShader()

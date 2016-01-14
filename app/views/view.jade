@@ -10,6 +10,7 @@ html
 		//- Site Properties
 		title ShaderStudio - #{shader.info.name}
 		link(rel='stylesheet' href='/static/components/semantic/dist/semantic.min.css')
+		link(rel='stylesheet' href='/static/components/highlight/styles/monokai-sublime.css')
 		link(rel='stylesheet' href='/static/css/common.css')
 		link(rel='stylesheet' href='/static/css/view.css')
 		link(rel='icon' href='/static/img/favicon.ico')
@@ -119,8 +120,47 @@ html
 
 
 				.eight.wide.column#right
-					pre#editor
-						!{shader.renderpass[0].code}
+					.ui.top.attached.tabular.menu.inverted.border0
+						a.active.item(data-tab='image') Image
+						a.item(data-tab='sound') Sound
+						button.ui.right.labeled.icon.teal.button.left1em#run
+							i.right.arrow.icon
+							| Run
+						button.ui.right.labeled.icon.violet.button.disabled
+							i.save.icon
+							| Save
+					.ui.inverted.accordion#tooltip
+						.title
+							i.dropdown.icon
+							| Shader Inputs
+						.content
+							pre#pre
+								code.glsl.
+									uniform vec3      iResolution;           // viewport resolution (in pixels)
+									uniform float     iGlobalTime;           // shader playback time (in seconds)
+									uniform float     iChannelTime[4];       // channel playback time (in seconds)
+									uniform vec3      iChannelResolution[4]; // channel resolution (in pixels)
+									uniform vec4      iMouse;                // mouse pixel coords. xy: current (if MLB down), zw: click
+									uniform samplerXX iChannel0..3;          // input channel. XX = 2D/Cube
+									uniform vec4      iDate;                 // (year, month, day, time in seconds)
+									uniform float     iSampleRate;           // sound sample rate (i.e., 44100)
+					.ui.bottom.attached.active.tab.segment(data-tab='image').height80.border0
+						#imageEditor
+						.ui.dimmer
+							.content
+								.center
+									h2.ui.inverted.icon.header
+										i.add.circle.icon
+										| Click To Enable Image Shader
+
+					.ui.bottom.attached.tab.segment(data-tab='sound').height80.border0
+						#soundEditor
+						.ui.dimmer
+							.content
+								.center
+									h2.ui.inverted.icon.header
+										i.add.circle.icon
+										| Click To Enable Sound Shader
 
 		script#glslVert(type='x-shader/x-vertex')
 			include glsl/vert.vert
@@ -139,5 +179,6 @@ html
 		script(src='/static/components/semantic/dist/semantic.min.js')
 		script(src='/static/components/twgl.js/dist/twgl.min.js')
 		script(src='/static/components/ace-builds/src-min/ace.js')
+		script(src='/static/components/highlight/highlight.pack.js')
 		script(src='/static/js/render.js')
 		script(src='/static/js/view.js')
