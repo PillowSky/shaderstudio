@@ -6,6 +6,12 @@ navigator.getUserMedia = navigator.getUserMedia or navigator.webkitGetUserMedia 
 class ShaderRender
 	constructor: (@canvas, @mouse, @keyboard, @vert, @frag, @pass, @host) ->
 		@gl = twgl.getWebGLContext(@canvas)
+
+		if not @gl
+			alert("Your browser doesn't support WebGL.\nWe are sorry that it can't show you the magic of ShaderStudio.")
+			if confirm('Would you like to update your browser now?')
+				location.href = 'http://browsehappy.com/'
+
 		@gl.getExtension('OES_standard_derivatives')
 		@gl.getExtension('EXT_shader_texture_lod')
 		@programInfo = null
