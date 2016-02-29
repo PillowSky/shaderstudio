@@ -157,7 +157,7 @@ $ ->
 			startShader()
 
 	$.get "/comment/#{window.shader.info.id}", (data)->
-		$('#board').html(tmpl('tmpl-comment', data))
+		$('#board').html(tmpl('tmpl-comment', data)) if data
 
 	$('form.reply.form').submit (event)->
 		comment = $(this).find('textarea').val()
