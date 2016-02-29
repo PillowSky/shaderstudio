@@ -1,0 +1,1125 @@
+
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <title>Shadertoy BETA</title>
+<meta charset="utf-8" />
+<meta name="Keywords" content="shadertoy, shader toy, quilez, inigo, jeremias, pol, fractals, demoscene, computer graphics, mathematics, rendering, demo, 3D, realtime, shader, raytracing, webgl, glsl">
+<meta name="Description" content="Shadertoy, GLSL shaders through WebGL">
+<meta name="Author" content="Beautypi, Inigo Quilez, Pol Jeremias">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" / >
+
+<meta name="apple-mobile-web-app-capable" content="yes" />
+
+<link rel="image_src" href="https://www.shadertoy.com/img/logo.png" />
+
+<link rel="apple-touch-icon" href="/img/launch_icon_57.png"/>
+<link rel="apple-touch-icon" sizes="72x72" href="/img/launch_icon_72.png"/>
+<link rel="apple-touch-icon" sizes="114x114" href="/img/launch_icon_114.png"/>
+<link rel="shortcut icon" href="/img/favicon.ico"/>
+
+<link rel="stylesheet" type="text/css" href="/css/shadertoy.css?v=14"/>
+
+
+    <link rel="stylesheet" href="/lib/codemirror.css"/>
+    <link rel="stylesheet" href="/lib/addon/dialog/dialog.css"/>
+    <link rel="stylesheet" href="/lib/addon/fold/foldgutter.css"/>
+    <link rel="stylesheet" href="/css/dlAlert.css?v=16"/>
+    <link rel="stylesheet" href="/css/pgWatch.css?v=16"/>
+
+    <script type="text/javascript">
+	function postLoad() {}
+    function doSaveShader() {}
+    var gUserName = null;
+    var gShaderID = "Ms2SD1";
+    </script>
+
+    <script src="https://connect.soundcloud.com/sdk/sdk-3.0.0.js"></script>
+
+    <script type="text/javascript" src="/lib/piLibs.js?v=16"></script>
+    <script type="text/javascript" src="/js/cmGeneral.js?v=16"></script>
+    <script type="text/javascript" src="/js/cmWebVR.js?v=16"></script>
+    <script type="text/javascript" src="/js/cmLive.js?v=16"></script>
+    <script type="text/javascript" src="/lib/codemirror.js"></script>
+    <script type="text/javascript" src="/lib/addon/dialog/dialog.js"></script>
+    <script type="text/javascript" src="/lib/addon/search/searchcursor.js"></script>
+    <script type="text/javascript" src="/lib/addon/search/search.js"></script>
+    <script type="text/javascript" src="/lib/addon/fold/foldcode.js"></script>
+    <script type="text/javascript" src="/lib/addon/fold/foldgutter.js"></script>
+    <script type="text/javascript" src="/lib/addon/fold/brace-fold.js"></script>
+    <script type="text/javascript" src="/lib/glsl.js?v=16"></script>
+    <script type="text/javascript" src="/js/effect.js?v=16"></script>
+    <script type="text/javascript" src="/js/pgWatch.js?v=16"></script>
+
+	
+</head>
+
+<body onload="watchInit()" onresize="watchResize()">
+
+
+<!-- header =================================================================================== -->
+
+<div id="header">
+<div id="headerContent">
+
+    <a href="/" id="headerTitle">Shadertoy</a>
+
+    <div id="headerSearch">
+    	<form name="formSearch" action="/results" method="get">
+        <input type="search" results="5" id="mySearch" name="query" placeholder="Search..."/>
+    	</form>
+    </div>
+
+
+    <div id="headerLogin">
+    
+        <a class="headerLinks" href="/browse">Browse</a>
+        <a class="headerLinks" href="/live">Live</a>
+        <a class="headerLinks" href="/new">New Shader</a>
+        <a class="headerLinks" href="/signin">Sign In</a>
+
+        </div>
+
+</div>
+
+<div id="headerCuadradito" title="The color of this rectangle helps Shadertoy developers diagnose layout problems"></div>
+
+</div>
+<!-- admin ================================================================================== -->
+
+
+
+<!-- content ================================================================================== -->
+
+<div id="content">
+
+
+    <div id="leftColumn">
+        <div id="leftColumnContainer">
+
+            <div id="player">
+                <canvas id="demogl" class="playerCanvas"></canvas>
+                <div id="playerBar" class="playerBar">
+                    <div id="myResetButton" class="uiButton" title="reset time" style="cssFloat:left;top:1px;left:16px;background-image:url('/img/rewind.png')"></div>
+                    <div id="myPauseButton" class="uiButton" title="pause/resume" style="cssFloat:left;top:1px;left:44px;background-image:url('/img/pause.png')"></div>
+                    <span id="myTime" style="top:4px;left:88px;position:absolute;color:#202020;font:italic bold 14px arial,serif">0.00</span>
+                    <span id="myFramerate" style="top:4px;left:164px;position:absolute;color:#202020;font:italic bold 14px arial,serif">00.0 fps</span>
+                    <div id="myVR" class="uiButton" title="enable VR" style="cssFloat:left;top:1px;right:84px;background-image:url('/img/vrOff.png');visible:hidden"></div>
+                    <div id="myVolume" class="uiButton" title="volume" style="cssFloat:left;top:1px;right:48px;background-image:url('/img/speakerOn.png')"></div>
+                    <div id="myFullScreen" class="uiButton" title="go fullscreen" style="cssFloat:left;top:1px;right:8px;background-image:url('/img/fullscreen.png')"></div>
+                </div>
+            </div>
+
+            <div id="shaderInfo">
+
+                
+                    <div id="shaderInfoHeader">
+                        <div id="shaderInfoHeaderLeft">
+                                                        <div id="shaderTitle"></div>
+                            <div id="shaderTags"></div>
+                                                    </div>
+                        <div id="shaderInfoHeaderRight">
+                            <div id="shaderStats"></div>
+                            <div id="shaderAuthor"></div>
+                            <div id="shaderButtons">
+                                                                <img class="uiButtonNew" src="/img/share.png" title="share this shader" onclick="doShareShader( piGetCoords(this) )" />
+                                <div style="position:relative;top:-4px;margin-left:12px;display:inline-block;">
+                                                                        <img src="/img/wasWeek.png" title="Has been Shader of the Week!" />
+                                                                                                        </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="shaderDescription"></div>
+
+                                </div>
+
+                        <!--- comments -->
+                        
+                        <div id="comments">
+
+                            <div id="commentsHeader">
+                                                                <span style="color:#606060;">Comments</span>
+                                <div class="uiSmallButton" style="right:0px;top:0px;position:absolute;background:url('/img/helpSmall.png');" title="BBCode help" onclick="showBBCodeHelp()"></div>
+                                                            </div>
+
+                            <div id="myComments" style="margin-top:4px"></div>
+
+                            <div id="commentsForm">
+                                                                <span style='font-weight:bold'><a class="regular" href="/signin">Sign in</a></span> to post a comment.
+                                                            </div>
+
+
+                        </div>
+                        
+
+            </div>
+        </div>
+
+<!-- ---------------------------------------------------------------------------------- -->
+
+<div id="rightColumn">
+    <div id="rightColumnContainer">
+        
+        <div id="editorWrapper" class="noFullScreen">
+
+            <div id="passManager">
+                <div style="height:4px;width:100%;bottom:0px;background-color:#f8b030;position:absolute;"></div>
+            </div>
+
+            <div id="editorHeader" class="left" onclick="if( this.mExpanded==true ) {this.mExpanded=false; this.className = 'left'; document.getElementById('editorHeaderArrow').className=''; document.getElementById('editor').className='left';  } else { this.mExpanded=true; this.className = 'right'; document.getElementById('editorHeaderArrow').className='expanded'; document.getElementById('editor').className='right'; }">
+                <div id="editorHeaderBar" class="expanded">
+                    <div id="editorHeaderArrow" class="expanded"></div>
+                    <span style="left:24px;top:2px;position:relative">Shader Inputs</span>
+                </div>
+                <div id="editorHeaderText"><pre><span style="color:#708">uniform vec3</span>      iResolution;           <span style="color:#080">// viewport resolution (in pixels)</span><br><span style="color:#708">uniform float</span>     iGlobalTime;           <span style="color:#080">// shader playback time (in seconds)</span><br><span style="color:#708">uniform float</span>     iChannelTime[4];       <span style="color:#080">// channel playback time (in seconds)</span><br><span style="color:#708">uniform vec3     </span> iChannelResolution[4]; <span style="color:#080">// channel resolution (in pixels)</span><br><span style="color:#708">uniform vec4</span>      iMouse;                <span style="color:#080">// mouse pixel coords. xy: current (if MLB down), zw: click</span><br><span style="color:#708">uniform samplerXX</span> iChannel0..3;          <span style="color:#080">// input channel. XX = 2D/Cube</span><br><span style="color:#708">uniform vec4     </span> iDate;                 <span style="color:#080">// (year, month, day, time in seconds)</span><br><span style="color:#708">uniform float    </span> iSampleRate;           <span style="color:#080">// sound sample rate (i.e., 44100)</span></pre></div>
+            </div>
+
+            <div id="editor" class="left"></div>
+
+            <div id="toolBar">
+                <div class="uiButton" style="left:30px;top:2px;position:absolute;background:url('/img/play.png');" title="Compile (<ALT>+<ENTER>)" onclick="gShaderToy.SetShaderFromEditor()"></div>
+
+                
+
+                <div class="uiButton" id="numCharacters" style="width:auto;height:auto;padding:1px;right:190px;top:4px;position:absolute;" title="Number of minimum number of characters to describe the same shader.&#13;&#13;Click to view the minimal shader." onclick="gShaderToy.showChars()">0 chars</div>
+                <div class="uiButton" style="right:120px;top:1px;position:absolute;background:url('/img/fullscreen.png');" title="Go full screen (<ALT>+<F>)" onclick="gShaderToy.changeEditorFullScreen()" , true)"></div>
+                <div class="uiButton" style="right:72px;top:4px;position:absolute;" title="Change font size (<ALT>+<+/->)">
+                    <select id="uiFontSelector" onChange="changeEditorFont();">
+                        <option selected='selected'>S</option>
+                        <option>M</option>
+                        <option>L</option>
+                        <option>XL</option>
+                    </select>
+                </div>
+
+                <div class="uiButton" style="right:20px;top:1px;position:absolute;background:url('/img/help.png');" title="Show GLSL help" onclick="showHelp()"></div>
+            </div>
+
+        </div>
+
+        <div id="textures">
+            <div id='texture0' class='inputSelector'>
+                
+    <canvas id='myUnitCanvas0' class='inputSelectorCanvas'></canvas>
+    <div id='mySampler0' class='inputSampler'>
+                    
+        <br />
+        Filter
+        <select class='inputForm' id='mySamplerFilter0' style='width:80px;' title='Pixel filtering mode' onchange='gShaderToy.SetSamplerFilter(0, this.value );'>
+                        
+
+                        <option value='nearest'>nearest</option>
+
+                        <option value='linear'>linear</option>
+
+                        <option value='mipmap'>mipmap</option>
+
+                    </select>
+        <br />
+        Wrap
+        <select class='inputForm' id='mySamplerWrap0' style='width:80px;' title='Pixel filtering mode' onchange='gShaderToy.SetSamplerWrap(0, this.value );'>
+                        
+
+                        <option value='clamp'>clamp</option>
+
+                        <option value='repeat'>repeat</option>
+
+                    </select>
+        <br />
+        VFlip<input type='checkbox' id='mySamplerVFlip0' value='No' onchange='gShaderToy.SetSamplerVFlip(0,(this.checked)?"true":"false");' />
+
+                </div>
+        <div id='inputSelectorControls0' class='inputSelectorControls'>
+                    
+        <div id='myUnitText0' class='inputSelectorText'>iChannel0</div>
+
+                </div>
+
+            </div>
+<div id='texture1' class='inputSelector'>
+                
+    <canvas id='myUnitCanvas1' class='inputSelectorCanvas'></canvas>
+    <div id='mySampler1' class='inputSampler'>
+                    
+        <br />
+        Filter
+        <select class='inputForm' id='mySamplerFilter1' style='width:80px;' title='Pixel filtering mode' onchange='gShaderToy.SetSamplerFilter(1, this.value );'>
+                        
+
+                        <option value='nearest'>nearest</option>
+
+                        <option value='linear'>linear</option>
+
+                        <option value='mipmap'>mipmap</option>
+
+                    </select>
+        <br />
+        Wrap
+        <select class='inputForm' id='mySamplerWrap1' style='width:80px;' title='Pixel filtering mode' onchange='gShaderToy.SetSamplerWrap(1, this.value );'>
+                        
+
+                        <option value='clamp'>clamp</option>
+
+                        <option value='repeat'>repeat</option>
+
+                    </select>
+        <br />
+        VFlip<input type='checkbox' id='mySamplerVFlip1' value='No' onchange='gShaderToy.SetSamplerVFlip(1,(this.checked)?"true":"false");' />
+
+                </div>
+        <div id='inputSelectorControls1' class='inputSelectorControls'>
+                    
+        <div id='myUnitText1' class='inputSelectorText'>iChannel1</div>
+
+                </div>
+
+            </div>
+<div id='texture2' class='inputSelector'>
+                
+    <canvas id='myUnitCanvas2' class='inputSelectorCanvas'></canvas>
+    <div id='mySampler2' class='inputSampler'>
+                    
+        <br />
+        Filter
+        <select class='inputForm' id='mySamplerFilter2' style='width:80px;' title='Pixel filtering mode' onchange='gShaderToy.SetSamplerFilter(2, this.value );'>
+                        
+
+                        <option value='nearest'>nearest</option>
+
+                        <option value='linear'>linear</option>
+
+                        <option value='mipmap'>mipmap</option>
+
+                    </select>
+        <br />
+        Wrap
+        <select class='inputForm' id='mySamplerWrap2' style='width:80px;' title='Pixel filtering mode' onchange='gShaderToy.SetSamplerWrap(2, this.value );'>
+                        
+
+                        <option value='clamp'>clamp</option>
+
+                        <option value='repeat'>repeat</option>
+
+                    </select>
+        <br />
+        VFlip<input type='checkbox' id='mySamplerVFlip2' value='No' onchange='gShaderToy.SetSamplerVFlip(2,(this.checked)?"true":"false");' />
+
+                </div>
+        <div id='inputSelectorControls2' class='inputSelectorControls'>
+                    
+        <div id='myUnitText2' class='inputSelectorText'>iChannel2</div>
+
+                </div>
+
+            </div>
+<div id='texture3' class='inputSelector'>
+                
+    <canvas id='myUnitCanvas3' class='inputSelectorCanvas'></canvas>
+    <div id='mySampler3' class='inputSampler'>
+                    
+        <br />
+        Filter
+        <select class='inputForm' id='mySamplerFilter3' style='width:80px;' title='Pixel filtering mode' onchange='gShaderToy.SetSamplerFilter(3, this.value );'>
+                        
+
+                        <option value='nearest'>nearest</option>
+
+                        <option value='linear'>linear</option>
+
+                        <option value='mipmap'>mipmap</option>
+
+                    </select>
+        <br />
+        Wrap
+        <select class='inputForm' id='mySamplerWrap3' style='width:80px;' title='Pixel filtering mode' onchange='gShaderToy.SetSamplerWrap(3, this.value );'>
+                        
+
+                        <option value='clamp'>clamp</option>
+
+                        <option value='repeat'>repeat</option>
+
+                    </select>
+        <br />
+        VFlip<input type='checkbox' id='mySamplerVFlip3' value='No' onchange='gShaderToy.SetSamplerVFlip(3,(this.checked)?"true":"false");' />
+
+                </div>
+        <div id='inputSelectorControls3' class='inputSelectorControls'>
+                    
+        <div id='myUnitText3' class='inputSelectorText'>iChannel3</div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- ========================================================================================= -->
+<!-- pickInput =============================================================================== -->
+<script type="text/javascript">
+
+var gCurrentEditingSlot = 0;
+var gDlgPick_image = null;
+var gDlgPick_sound = null;
+
+function overlay( slot, passType )
+{
+    var dlgPick = null;
+
+    if( passType=="image" ) dlgPick = gDlgPick_image;
+    if( passType=="sound" ) dlgPick = gDlgPick_sound;
+
+    if( dlgPick==null )
+    {
+        dlgPick = {};
+        dlgPick.mEle = document.getElementById("pickTexture_"+passType);
+        dlgPick.mIsMoving = false;
+        dlgPick.mStartPosX = 0;
+        dlgPick.mStartPosY = 0;
+
+        dlgPick.mHeader = document.getElementById("pickTextureHeader_"+passType);
+
+        dlgPick.mHeader.onmousedown = function(ev) { dlgPick.mIsMoving = true; dlgPick.mStartPosX = ev.screenX - dlgPick.mEle.offsetLeft; dlgPick.mStartPosY = ev.screenY - dlgPick.mEle.offsetTop; };
+        dlgPick.mHeader.onmouseup   = function(ev) { dlgPick.mIsMoving = false; };
+        dlgPick.mVisible = false;
+
+        if( passType=="image" ) gDlgPick_image = dlgPick;
+        if( passType=="sound" ) gDlgPick_sound = dlgPick;
+    }
+
+    document.onmousemove = function( ev )
+    {
+
+        if( dlgPick!=null && dlgPick.mIsMoving )
+        {
+            dlgPick.mEle.style.left = (ev.screenX-dlgPick.mStartPosX) + "px";
+            dlgPick.mEle.style.top  = (ev.screenY-dlgPick.mStartPosY) + "px";
+        }
+    }
+
+    if( dlgPick.mVisible )
+    {
+        dlgPick.mVisible = false;
+	    dlgPick.mEle.style.opacity = "0.0";
+        dlgPick.mEle.style.visibility = "hidden";
+    }
+    else
+    {
+        dlgPick.mVisible = true;
+	    dlgPick.mEle.style.opacity = "1.0";
+        dlgPick.mEle.style.visibility = "visible";
+    }
+    gCurrentEditingSlot = slot;
+}
+
+
+</script>
+
+<div id="pickTexture_image" class="dialog" style="left:30%;top:20%">
+
+  <div id="pickTextureHeader_image" class="dialogHeader" >
+    <div class="dialogTitle">Select Input</div>
+    <div class="dialogCloseButton" onclick='overlay(null,"image")'></div>
+  </div>
+
+<div class="dialogContent">
+<div class="dialogContentBody">
+
+
+  <b>Misc</b><br/>
+  <table>
+  <tr>
+  <td valign="top"><a href="#" class="tooltip"><img class="inputThumbnail" src="/presets/previz/none.png" onClick="gShaderToy.SetTexture(gCurrentEditingSlot, {mType:null, mID:-1, mSrc:null})"/></a></td>
+  <td width="4px"></td>
+  <td valign="top"><a href="#" class="tooltip"><img class="inputThumbnail" src="/presets/previz/keyboard.png" onClick="gShaderToy.SetTexture(gCurrentEditingSlot, {mType:'keyboard', mID:33, mSrc:null, mSampler:{ filter: 'linear', wrap: 'clamp', vflip:'true', srgb:'false', internal:'byte' }})"/><br/>Keyboard<span>Standard Keyboard</span></a></td>
+  <td width="4px"></td>
+  <td valign="top"><a href="#" class="tooltip"><img class="inputThumbnail" src="/presets/previz/webcam.png" onClick="gShaderToy.SetTexture(gCurrentEditingSlot, {mType:'webcam', mID:31, mSrc:'/presets/webcam.png', mSampler:{ filter: 'linear', wrap: 'clamp', vflip:'true', srgb:'false', internal:'byte' }})"/><br/>Webcam<span>Webcam</span></a></td>
+  <td width="4px"></td>
+  <td valign="top"><a href="#" class="tooltip"><img class="inputThumbnail" src="/presets/previz/mic.png"   onClick="gShaderToy.SetTexture(gCurrentEditingSlot, {mType:'mic',   mID:32, mSrc:'/presets/mic.png', mSampler:{ filter: 'linear', wrap: 'clamp', vflip:'true', srgb:'false', internal:'byte' }})"/>  <br/>Microphone<span>Microphone</span></a></td>
+  </tr>
+  </table>
+  <br/>
+
+  <b>Textures</b><br/>
+  <table>
+  <tr>
+   <td valign="top"><a href="#" class="tooltip"><img class="inputThumbnail" src="/presets/previz/tex00.jpg" onClick="gShaderToy.SetTexture(gCurrentEditingSlot, {mType:'texture', mID:1,  mSrc:'/presets/tex00.jpg', mSampler:{ filter: 'mipmap', wrap: 'repeat', vflip:'true', srgb:'false', internal:'byte' }})"/><span><b>Resolution:</b> 512 x 512<br/><b>Format:</b> rgb<br/><br/><b>Source:</b> unkown</span></a></td><td width="4px"></td>
+   <td valign="top"><a href="#" class="tooltip"><img class="inputThumbnail" src="/presets/previz/tex01.jpg" onClick="gShaderToy.SetTexture(gCurrentEditingSlot, {mType:'texture', mID:2,  mSrc:'/presets/tex01.jpg', mSampler:{ filter: 'mipmap', wrap: 'repeat', vflip:'true', srgb:'false', internal:'byte' }})"/><span><b>Resolution:</b> 1024 x 1024<br/><b>Format:</b> rgb<br/><br/><b>Source:</b> unkown</span></a></td><td width="4px"></td>
+   <td valign="top"><a href="#" class="tooltip"><img class="inputThumbnail" src="/presets/previz/tex02.jpg" onClick="gShaderToy.SetTexture(gCurrentEditingSlot, {mType:'texture', mID:3,  mSrc:'/presets/tex02.jpg', mSampler:{ filter: 'mipmap', wrap: 'repeat', vflip:'true', srgb:'false', internal:'byte' }})"/><span><b>Resolution:</b> 512 x 512<br/><b>Format:</b> rgb<br/><br/><b>Source:</b> unkown</span></a></td><td width="4px"></td>
+   <td valign="top"><a href="#" class="tooltip"><img class="inputThumbnail" src="/presets/previz/tex03.jpg" onClick="gShaderToy.SetTexture(gCurrentEditingSlot, {mType:'texture', mID:4,  mSrc:'/presets/tex03.jpg', mSampler:{ filter: 'mipmap', wrap: 'repeat', vflip:'true', srgb:'false', internal:'byte' }})"/><span><b>Resolution:</b> 512 x 512<br/><b>Format:</b> rgb<br/><br/><b>Source:</b> unkown</span></a></td><td width="4px"></td>
+   <td valign="top"><a href="#" class="tooltip"><img class="inputThumbnail" src="/presets/previz/tex04.jpg" onClick="gShaderToy.SetTexture(gCurrentEditingSlot, {mType:'texture', mID:5,  mSrc:'/presets/tex04.jpg', mSampler:{ filter: 'mipmap', wrap: 'repeat', vflip:'true', srgb:'false', internal:'byte' }})"/><span><b>Resolution:</b> 512 x 512<br/><b>Format:</b> rgb<br/><br/><b>Source:</b> unkown</span></a></td><td width="4px"></td>
+   <td valign="top"><a href="#" class="tooltip"><img class="inputThumbnail" src="/presets/previz/tex05.jpg" onClick="gShaderToy.SetTexture(gCurrentEditingSlot, {mType:'texture', mID:6,  mSrc:'/presets/tex05.jpg', mSampler:{ filter: 'mipmap', wrap: 'repeat', vflip:'true', srgb:'false', internal:'byte' }})"/><span><b>Resolution:</b> 1024 x 1024<br/><b>Format:</b> rgb<br/><br/><b>Source:</b> unkown</span></a></td><td width="4px"></td>
+   <td valign="top"><a href="#" class="tooltip"><img class="inputThumbnail" src="/presets/previz/tex06.jpg" onClick="gShaderToy.SetTexture(gCurrentEditingSlot, {mType:'texture', mID:7,  mSrc:'/presets/tex06.jpg', mSampler:{ filter: 'mipmap', wrap: 'repeat', vflip:'true', srgb:'false', internal:'byte' }})"/><span><b>Resolution:</b> 1024 x 1024<br/><b>Format:</b> rgb<br/><br/><b>Source:</b> unkown</span></a></td><td width="4px"></td>
+   <td valign="top"><a href="#" class="tooltip"><img class="inputThumbnail" src="/presets/previz/tex07.jpg" onClick="gShaderToy.SetTexture(gCurrentEditingSlot, {mType:'texture', mID:8,  mSrc:'/presets/tex07.jpg', mSampler:{ filter: 'mipmap', wrap: 'repeat', vflip:'true', srgb:'false', internal:'byte' }})"/><span><b>Resolution:</b> 1024 x 1024<br/><b>Format:</b> rgb<br/><br/><b>Source:</b> www.shadertoy.com</span></a></td><td width="4px"></td>
+   <td valign="top"><a href="#" class="tooltip"><img class="inputThumbnail" src="/presets/previz/tex08.jpg" onClick="gShaderToy.SetTexture(gCurrentEditingSlot, {mType:'texture', mID:9,  mSrc:'/presets/tex08.jpg', mSampler:{ filter: 'mipmap', wrap: 'repeat', vflip:'true', srgb:'false', internal:'byte' }})"/><span><b>Resolution:</b> 512 x 512<br/><b>Format:</b> rgb<br/><br/><b>Source:</b> www.shadertoy.com</span></a></td><td width="4px"></td>
+   <td valign="top"><a href="#" class="tooltip"><img class="inputThumbnail" src="/presets/previz/tex09.jpg" onClick="gShaderToy.SetTexture(gCurrentEditingSlot, {mType:'texture', mID:10, mSrc:'/presets/tex09.jpg', mSampler:{ filter: 'mipmap', wrap: 'repeat', vflip:'true', srgb:'false', internal:'byte' }})"/><span><b>Resolution:</b> 1024 x 1024<br/><b>Format:</b> rgb<br/><br/><b>Source:</b> www.shadertoy.com</span></a></td>
+  </tr>
+  <tr>
+   <td valign="top"><a href="#" class="tooltip"><img class="inputThumbnail" src="/presets/previz/tex10.png" onClick="gShaderToy.SetTexture(gCurrentEditingSlot, {mType:'texture', mID:15, mSrc:'/presets/tex10.png', mSampler:{ filter: 'mipmap',  wrap: 'repeat', vflip:'true', srgb:'false', internal:'byte' }})"/><span><b>Resolution:</b> 64 x 64<br/><b>Format:</b> r<br/><br/><b>Source:</b> www.shadertoy.com</span></a></td><td width="4px"></td>
+   <td valign="top"><a href="#" class="tooltip"><img class="inputThumbnail" src="/presets/previz/tex11.png" onClick="gShaderToy.SetTexture(gCurrentEditingSlot, {mType:'texture', mID:16, mSrc:'/presets/tex11.png', mSampler:{ filter: 'mipmap',  wrap: 'repeat', vflip:'true', srgb:'false', internal:'byte' }})"/><span><b>Resolution:</b> 64 x 64<br/><b>Format:</b> rgba<br/><br/><b>Source:</b> www.shadertoy.com</span></a></td><td width="4px"></td>
+   <td valign="top"><a href="#" class="tooltip"><img class="inputThumbnail" src="/presets/previz/tex10.png" onClick="gShaderToy.SetTexture(gCurrentEditingSlot, {mType:'texture', mID:17, mSrc:'/presets/tex12.png', mSampler:{ filter: 'mipmap',  wrap: 'repeat', vflip:'true', srgb:'false', internal:'byte' }})"/><span><b>Resolution:</b> 256 x 256<br/><b>Format:</b> r<br/><br/><b>Source:</b> www.shadertoy.com</span></a></td><td width="4px"></td>
+   <td valign="top"><a href="#" class="tooltip"><img class="inputThumbnail" src="/presets/previz/tex15.png" onClick="gShaderToy.SetTexture(gCurrentEditingSlot, {mType:'texture', mID:28, mSrc:'/presets/tex15.png', mSampler:{ filter: 'nearest', wrap: 'repeat', vflip:'true', srgb:'false', internal:'byte' }})"/><span><b>Resolution:</b> 8 x 8<br/><b>Format:</b> r<br/><br/><b>Source:</b> www.shadertoy.com</span></a></td><td width="4px"></td>
+   <td valign="top"><a href="#" class="tooltip"><img class="inputThumbnail" src="/presets/previz/tex16.png" onClick="gShaderToy.SetTexture(gCurrentEditingSlot, {mType:'texture', mID:30, mSrc:'/presets/tex16.png', mSampler:{ filter: 'mipmap',  wrap: 'repeat', vflip:'true', srgb:'false', internal:'byte' }})"/><span><b>Resolution:</b> 256 x 256<br/><b>Format:</b> rgba<br/><br/><b>Source:</b> www.shadertoy.com</span></a></td><td width="4px"></td>
+   <td valign="top"><a href="#" class="tooltip"><img class="inputThumbnail" src="/presets/previz/tex14.png" onClick="gShaderToy.SetTexture(gCurrentEditingSlot, {mType:'texture', mID:14, mSrc:'/presets/tex14.png', mSampler:{ filter: 'nearest', wrap: 'clamp',  vflip:'true', srgb:'false', internal:'byte' }})"/><span><b>Resolution:</b> 256 x 32<br/><b>Format:</b> rgb<br/><br/><b>Source:</b> www.shadertoy.com</span></a></td><td width="4px"></td>
+   <td valign="top"><a href="#" class="tooltip"><img class="inputThumbnail" src="/presets/previz/tex17.jpg" onClick="gShaderToy.SetTexture(gCurrentEditingSlot, {mType:'texture', mID:45, mSrc:'/presets/tex17.jpg', mSampler:{ filter: 'mipmap',  wrap: 'repeat', vflip:'true', srgb:'false', internal:'byte' }})"/><span><b>Resolution:</b> 1024 x 1024<br/><b>Format:</b> rgb<br/><br/><b>Source:</b> www.shadertoy.com</span></a></td><td width="4px"></td>
+   <td valign="top"><a href="#" class="tooltip"><img class="inputThumbnail" src="/presets/previz/tex18.jpg" onClick="gShaderToy.SetTexture(gCurrentEditingSlot, {mType:'texture', mID:46, mSrc:'/presets/tex18.jpg', mSampler:{ filter: 'mipmap',  wrap: 'repeat', vflip:'true', srgb:'false', internal:'byte' }})"/><span><b>Resolution:</b> 1024 x 1024<br/><b>Format:</b> rgb<br/><br/><b>Source:</b> www.shadertoy.com</span></a></td><td width="4px"></td>
+   <td valign="top"><a href="#" class="tooltip"><img class="inputThumbnail" src="/presets/previz/tex19.jpg" onClick="gShaderToy.SetTexture(gCurrentEditingSlot, {mType:'texture', mID:47, mSrc:'/presets/tex19.png', mSampler:{ filter: 'mipmap',  wrap: 'repeat', vflip:'true', srgb:'false', internal:'byte' }})"/><span><b>Resolution:</b> 512 x 512<br/><b>Format:</b> r<br/><br/><b>Source:</b> http://photosculpt.net/gallery/textures-seamless-tileable/</span></a></td><td width="4px"></td>
+   <td valign="top"><a href="#" class="tooltip"><img class="inputThumbnail" src="/presets/previz/tex20.jpg" onClick="gShaderToy.SetTexture(gCurrentEditingSlot, {mType:'texture', mID:48, mSrc:'/presets/tex20.jpg', mSampler:{ filter: 'mipmap',  wrap: 'repeat', vflip:'true', srgb:'false', internal:'byte' }})"/><span><b>Resolution:</b> 1024 x 1024<br/><b>Format:</b> rgb<br/><br/><b>Source:</b> www.shadertoy.com</span></a></td><td width="4px"></td>
+  
+  </tr>
+
+  </table>
+
+  <br/>
+  <b>Videos</b><br/>
+  <table>
+  <tr>
+  <td valign="top"><a href="#" class="tooltip"><img class="inputThumbnail" src="/presets/previz/vid00.gif" onClick="gShaderToy.SetTexture(gCurrentEditingSlot, {mType:'video', mID:11, mSrc:'/presets/vid00.ogv',  mSampler:{ filter: 'linear',  wrap: 'clamp', vflip:'true', srgb:'false', internal:'byte' }})"/><span><b>Duration:</b> 34s<br/><br/><b>Source:</b> www.google.com</span></a></td><td width="4px"></td>
+  <td valign="top"><a href="#" class="tooltip"><img class="inputThumbnail" src="/presets/previz/vid01.gif" onClick="gShaderToy.SetTexture(gCurrentEditingSlot, {mType:'video', mID:12, mSrc:'/presets/vid01.webm', mSampler:{ filter: 'linear',  wrap: 'clamp', vflip:'true', srgb:'false', internal:'byte' }})"/><span><b>Duration:</b> 3m 40s<br/><br/><b>Source:</b> http://www.youtube.com/watch?v=I02Ss2VUM3U</span></a></td><td width="4px"></td>
+  <td valign="top"><a href="#" class="tooltip"><img class="inputThumbnail" src="/presets/previz/vid02.gif" onClick="gShaderToy.SetTexture(gCurrentEditingSlot, {mType:'video', mID:29, mSrc:'/presets/vid02.ogv',  mSampler:{ filter: 'linear',  wrap: 'clamp', vflip:'true', srgb:'false', internal:'byte' }})"/><span><b>Duration:</b> 29s<br/><br/><b>Source:</b> https://archive.org/details/movies</span></a></td><td width="4px"></td>
+  <td valign="top"><a href="#" class="tooltip"><img class="inputThumbnail" src="/presets/previz/vid03.gif" onClick="gShaderToy.SetTexture(gCurrentEditingSlot, {mType:'video', mID:36, mSrc:'/presets/vid03.webm', mSampler:{ filter: 'linear',  wrap: 'clamp', vflip:'true', srgb:'false', internal:'byte' }})"/><span><b>Duration:</b> 2m 19s<br/><br/><b>Source:</b> https://www.youtube.com/watch?v=T2k0PZCPQMk</span></a></td><td width="4px"></td>
+  </tr>
+  </table>
+  <br/>
+  <b>Cubemaps</b><br/>
+  <table>
+  <tr>
+  <td valign="top"><a href="#" class="tooltip"><img class="inputThumbnail" src="/presets/previz/cube00.png" onClick="gShaderToy.SetTexture(gCurrentEditingSlot, {mType:'cubemap', mID:22, mSrc:'/presets/cube00_0.jpg', mSampler:{ filter: 'mipmap',  wrap: 'clamp', vflip:'false', srgb:'false', internal:'byte' }})"/><span><b>Resolution:</b> 512x512<br/><br/><b>Source: http://www.pauldebevec.com/Probes</span></a></td><td width="4px"></td>
+  <td valign="top"><a href="#" class="tooltip"><img class="inputThumbnail" src="/presets/previz/cube01.png" onClick="gShaderToy.SetTexture(gCurrentEditingSlot, {mType:'cubemap', mID:23, mSrc:'/presets/cube01_0.png', mSampler:{ filter: 'mipmap',  wrap: 'clamp', vflip:'false', srgb:'false', internal:'byte' }})"/><span><b>Resolution:</b> 64x64<br/><br/><b>Source: http://www.pauldebevec.com/Probes</span></a></td><td width="4px"></td>
+  <td valign="top"><a href="#" class="tooltip"><img class="inputThumbnail" src="/presets/previz/cube02.png" onClick="gShaderToy.SetTexture(gCurrentEditingSlot, {mType:'cubemap', mID:24, mSrc:'/presets/cube02_0.jpg', mSampler:{ filter: 'mipmap',  wrap: 'clamp', vflip:'false', srgb:'false', internal:'byte' }})"/><span><b>Resolution:</b> 256x256<br/><br/><b>Source: http://www.pauldebevec.com/Probes</span></a></td><td width="4px"></td>
+  <td valign="top"><a href="#" class="tooltip"><img class="inputThumbnail" src="/presets/previz/cube03.png" onClick="gShaderToy.SetTexture(gCurrentEditingSlot, {mType:'cubemap', mID:25, mSrc:'/presets/cube03_0.png', mSampler:{ filter: 'mipmap',  wrap: 'clamp', vflip:'false', srgb:'false', internal:'byte' }})"/><span><b>Resolution:</b> 64x64<br/><br/><b>Source: http://www.pauldebevec.com/Probes</span></a></td><td width="4px"></td>
+  <td valign="top"><a href="#" class="tooltip"><img class="inputThumbnail" src="/presets/previz/cube04.png" onClick="gShaderToy.SetTexture(gCurrentEditingSlot, {mType:'cubemap', mID:26, mSrc:'/presets/cube04_0.png', mSampler:{ filter: 'mipmap',  wrap: 'clamp', vflip:'false', srgb:'false', internal:'byte' }})"/><span><b>Resolution:</b> 128x128<br/><br/><b>Source: http://www.pauldebevec.com/Probes</span></a></td><td width="4px"></td>
+  <td valign="top"><a href="#" class="tooltip"><img class="inputThumbnail" src="/presets/previz/cube05.png" onClick="gShaderToy.SetTexture(gCurrentEditingSlot, {mType:'cubemap', mID:27, mSrc:'/presets/cube05_0.png', mSampler:{ filter: 'mipmap',  wrap: 'clamp', vflip:'false', srgb:'false', internal:'byte' }})"/><span><b>Resolution:</b> 64x64<br/><br/><b>Source: http://www.pauldebevec.com/Probes</span></a></td><td width="4px"></td>
+  </tr>
+  </table>
+  <br/>
+  <b>Music</b><br/>
+  <table>
+  <tr>
+  <td><a href="#" class="tooltip"><img class="inputThumbnail" src="/presets/previz/mzk00.png" onClick="gShaderToy.SetTexture(gCurrentEditingSlot, {mType:'music', mID:13, mSrc:'/presets/mzk00.mp3', mSampler:{ filter: 'linear',  wrap: 'clamp', vflip:'false', srgb:'false', internal:'byte' }})"/><br/>Electronebulae<span><b>Title: Electronebulae<br/><b>Duration:</b> 4m 18s<br/><b>Author:</b> stage7</span></a></td><td width="4px"></td>
+  <td><a href="#" class="tooltip"><img class="inputThumbnail" src="/presets/previz/mzk00.png" onClick="gShaderToy.SetTexture(gCurrentEditingSlot, {mType:'music', mID:18, mSrc:'/presets/mzk01.mp3', mSampler:{ filter: 'linear',  wrap: 'clamp', vflip:'false', srgb:'false', internal:'byte' }})"/><br/>Experiment<span><b>Title: Experiment<br/><b>Duration:</b> 3m 48s<br/><b>Author:</b> iq</span></a></td><td width="4px"></td>
+  <td><a href="#" class="tooltip"><img class="inputThumbnail" src="/presets/previz/mzk00.png" onClick="gShaderToy.SetTexture(gCurrentEditingSlot, {mType:'music', mID:19, mSrc:'/presets/mzk02.mp3', mSampler:{ filter: 'linear',  wrap: 'clamp', vflip:'false', srgb:'false', internal:'byte' }})"/><br/>8 bit mentality<span><b>Title: 8 bit mentalit<br/><b>Duration:</b> 3m 25s<br/><b>Author:</b> stage7</span></a></td><td width="4px"></td>
+  <td><a href="#" class="tooltip"><img class="inputThumbnail" src="/presets/previz/mzk00.png" onClick="gShaderToy.SetTexture(gCurrentEditingSlot, {mType:'music', mID:20, mSrc:'/presets/mzk03.mp3', mSampler:{ filter: 'linear',  wrap: 'clamp', vflip:'false', srgb:'false', internal:'byte' }})"/><br/>X'TrackTure<span><b>Title: X'TrackTure<br/><b>Duration:</b> 3m 50s<br/><b>Author:</b> josSs</span></a></td><td width="4px"></td>
+  <td><a href="#" class="tooltip"><img class="inputThumbnail" src="/presets/previz/mzk00.png" onClick="gShaderToy.SetTexture(gCurrentEditingSlot, {mType:'music', mID:21, mSrc:'/presets/mzk04.mp3', mSampler:{ filter: 'linear',  wrap: 'clamp', vflip:'false', srgb:'false', internal:'byte' }})"/><br/>ourpithyator<span><b>Title: ourpithyator<br/><b>Duration:</b> 7m 32s<br/><b>Author:</b> AudeoFlow & Gizma</span></a></td><td width="4px"></td>
+  <td><a href="#" class="tooltip"><img class="inputThumbnail" src="/presets/previz/mzk00.png" onClick="gShaderToy.SetTexture(gCurrentEditingSlot, {mType:'music', mID:34, mSrc:'/presets/mzk05.mp3', mSampler:{ filter: 'linear',  wrap: 'clamp', vflip:'false', srgb:'false', internal:'byte' }})"/><br/>Tropical Beeper<span><b>Title: Tropical Beepe<br/><b>Duration:</b> 2m 42s<br/><b>Author:</b> Dave Hoskins</span></a></td><td width="4px"></td>
+  <td><a href="#" class="tooltip"><img class="inputThumbnail" src="/presets/previz/mzk00.png" onClick="gShaderToy.SetTexture(gCurrentEditingSlot, {mType:'music', mID:35, mSrc:'/presets/mzk06.mp3', mSampler:{ filter: 'linear',  wrap: 'clamp', vflip:'false', srgb:'false', internal:'byte' }})"/><br/>Most Geometric Person<span><b>Title: Most Geometric Person<br/><b>Duration:</b> 1m 15s<br/><b>Author:</b> Noby</span></a></td><td width="4px"></td>
+  </tr>
+  </table>
+</div>
+</div>
+</div>
+
+
+<!-- -------------------------------------------------------------------- -->
+
+
+<div id="pickTexture_sound" class="dialog" style="left:30%;top:20%">
+
+  <div id="pickTextureHeader_sound" class="dialogHeader" >
+    <div class="dialogTitle">Select Input</div>
+    <div class="dialogCloseButton" onclick='overlay(null,"sound")'></div>
+  </div>
+
+<div class="dialogContent">
+<div class="dialogContentBody">
+
+  <b>Misc</b><br/>
+  <table>
+  <tr>
+  <td valign="top">
+    <a href="#" class="tooltip">
+      <img class="inputThumbnail" src="/presets/previz/none.png" onClick="gShaderToy.SetTexture(gCurrentEditingSlot, {mType:null, mID:-1, mSrc:null})"/>
+    </a>
+  </td><td width="4px"></td>
+  </tr>
+  </table>
+  <br/>
+
+  <b>Textures</b><br/>
+  <table>
+  <tr>
+   <td valign="top"><a href="#" class="tooltip"><img class="inputThumbnail" src="/presets/previz/tex00.jpg" onClick="gShaderToy.SetTexture(gCurrentEditingSlot, {mType:'texture', mID:1, mSrc:'/presets/tex00.jpg'})"/><span><b>Resolution:</b> 512 x 512<br/><b>Format:</b> rgb<br/><br/><b>Source:</b> unkown</span></a></td><td width="4px"></td>
+   <td valign="top"><a href="#" class="tooltip"><img class="inputThumbnail" src="/presets/previz/tex01.jpg" onClick="gShaderToy.SetTexture(gCurrentEditingSlot, {mType:'texture', mID:2, mSrc:'/presets/tex01.jpg'})"/><span><b>Resolution:</b> 1024 x 1024<br/><b>Format:</b> rgb<br/><br/><b>Source:</b> unkown</span></a></td><td width="4px"></td>
+   <td valign="top"><a href="#" class="tooltip"><img class="inputThumbnail" src="/presets/previz/tex02.jpg" onClick="gShaderToy.SetTexture(gCurrentEditingSlot, {mType:'texture', mID:3, mSrc:'/presets/tex02.jpg'})"/><span><b>Resolution:</b> 512 x 512<br/><b>Format:</b> rgb<br/><br/><b>Source:</b> unkown</span></a></td><td width="4px"></td>
+   <td valign="top"><a href="#" class="tooltip"><img class="inputThumbnail" src="/presets/previz/tex03.jpg" onClick="gShaderToy.SetTexture(gCurrentEditingSlot, {mType:'texture', mID:4, mSrc:'/presets/tex03.jpg'})"/><span><b>Resolution:</b> 512 x 512<br/><b>Format:</b> rgb<br/><br/><b>Source:</b> unkown</span></a></td><td width="4px"></td>
+   <td valign="top"><a href="#" class="tooltip"><img class="inputThumbnail" src="/presets/previz/tex04.jpg" onClick="gShaderToy.SetTexture(gCurrentEditingSlot, {mType:'texture', mID:5, mSrc:'/presets/tex04.jpg'})"/><span><b>Resolution:</b> 512 x 512<br/><b>Format:</b> rgb<br/><br/><b>Source:</b> unkown</span></a></td><td width="4px"></td>
+   <td valign="top"><a href="#" class="tooltip"><img class="inputThumbnail" src="/presets/previz/tex05.jpg" onClick="gShaderToy.SetTexture(gCurrentEditingSlot, {mType:'texture', mID:6, mSrc:'/presets/tex05.jpg'})"/><span><b>Resolution:</b> 1024 x 1024<br/><b>Format:</b> rgb<br/><br/><b>Source:</b> unkown</span></a></td><td width="4px"></td>
+   <td valign="top"><a href="#" class="tooltip"><img class="inputThumbnail" src="/presets/previz/tex06.jpg" onClick="gShaderToy.SetTexture(gCurrentEditingSlot, {mType:'texture', mID:7, mSrc:'/presets/tex06.jpg'})"/><span><b>Resolution:</b> 1024 x 1024<br/><b>Format:</b> rgb<br/><br/><b>Source:</b> unkown</span></a></td><td width="4px"></td>
+   <td valign="top"><a href="#" class="tooltip"><img class="inputThumbnail" src="/presets/previz/tex07.jpg" onClick="gShaderToy.SetTexture(gCurrentEditingSlot, {mType:'texture', mID:8,  mSrc:'/presets/tex07.jpg'})"/><span><b>Resolution:</b> 1024 x 1024<br/><b>Format:</b> rgb<br/><br/><b>Source:</b> www.shadertoy.com</span></a></td><td width="4px"></td>
+   <td valign="top"><a href="#" class="tooltip"><img class="inputThumbnail" src="/presets/previz/tex08.jpg" onClick="gShaderToy.SetTexture(gCurrentEditingSlot, {mType:'texture', mID:9,  mSrc:'/presets/tex08.jpg'})"/><span><b>Resolution:</b> 512 x 512<br/><b>Format:</b> rgb<br/><br/><b>Source:</b> www.shadertoy.com</span></a></td><td width="4px"></td>
+   <td valign="top"><a href="#" class="tooltip"><img class="inputThumbnail" src="/presets/previz/tex09.jpg" onClick="gShaderToy.SetTexture(gCurrentEditingSlot, {mType:'texture', mID:10, mSrc:'/presets/tex09.jpg'})"/><span><b>Resolution:</b> 1024 x 1024<br/><b>Format:</b> rgb<br/><br/><b>Source:</b> www.shadertoy.com</span></a></td><td width="4px"></td>
+  </tr>
+  <tr>
+   <td valign="top"><a href="#" class="tooltip"><img class="inputThumbnail" src="/presets/previz/tex10.png" onClick="gShaderToy.SetTexture(gCurrentEditingSlot, {mType:'texture', mID:15, mSrc:'/presets/tex10.png'})"/><span><b>Resolution:</b> 64 x 64<br/><b>Format:</b> r<br/><br/><b>Source: www.shadertoy.com</span></a></td><td width="4px"></td>
+   <td valign="top"><a href="#" class="tooltip"><img class="inputThumbnail" src="/presets/previz/tex11.png" onClick="gShaderToy.SetTexture(gCurrentEditingSlot, {mType:'texture', mID:16, mSrc:'/presets/tex11.png'})"/><span><b>Resolution:</b> 64 x 64<br/><b>Format:</b> rgba<br/><br/><b>Source: www.shadertoy.com</span></a></td><td width="4px"></td>
+   <td valign="top"><a href="#" class="tooltip"><img class="inputThumbnail" src="/presets/previz/tex10.png" onClick="gShaderToy.SetTexture(gCurrentEditingSlot, {mType:'texture', mID:17, mSrc:'/presets/tex12.png'})"/><span><b>Resolution:</b> 256 x 256<br/><b>Format:</b> r<br/><br/><b>Source: www.shadertoy.com</span></a></td><td width="4px"></td>
+   <td valign="top"><a href="#" class="tooltip"><img class="inputThumbnail" src="/presets/previz/tex15.png" onClick="gShaderToy.SetTexture(gCurrentEditingSlot, {mType:'texture', mID:28, mSrc:'/presets/tex15.png'})"/><span><b>Resolution:</b> 8 x 8<br/><b>Format:</b> r<br/><br/><b>Source: www.shadertoy.com</span></a></td><td width="4px"></td>
+   <td valign="top"><a href="#" class="tooltip"><img class="inputThumbnail" src="/presets/previz/tex16.png" onClick="gShaderToy.SetTexture(gCurrentEditingSlot, {mType:'texture', mID:30, mSrc:'/presets/tex16.png'})"/><span><b>Resolution:</b> 256 x 256<br/><b>Format:</b> rgba<br/><br/><b>Source: www.shadertoy.com</span></a></td><td width="4px"></td>
+   <td valign="top"><a href="#" class="tooltip"><img class="inputThumbnail" src="/presets/previz/tex14.png" onClick="gShaderToy.SetTexture(gCurrentEditingSlot, {mType:'texture', mID:14, mSrc:'/presets/tex14.png'})"/><span><b>Resolution:</b> 256 x 32<br/><b>Format:</b> rgb<br/><br/><b>Source: www.shadertoy.com</span></a></td><td width="4px"></td>
+  </tr>
+  </table>
+
+</div>
+</div>
+</div>
+
+
+<!-- glslHelp ================================================================================ -->
+
+<script type="text/javascript">
+
+var gGLSLHelp = null;
+
+function showHelp()
+{
+    if( gGLSLHelp==null )
+    {
+        gGLSLHelp = {};
+        gGLSLHelp.mEle = document.getElementById("dlgHelp");
+        gGLSLHelp.mHeader = document.getElementById("dlgHelpHeader");
+        gGLSLHelp.mIsMoving = false;
+        gGLSLHelp.mStartPosX = 0;
+        gGLSLHelp.mStartPosY = 0;
+        gGLSLHelp.mHeader.onmousedown = function(ev) { gGLSLHelp.mIsMoving = true; gGLSLHelp.mStartPosX = ev.screenX - gGLSLHelp.mEle.offsetLeft; gGLSLHelp.mStartPosY = ev.screenY - gGLSLHelp.mEle.offsetTop; };
+        gGLSLHelp.mHeader.onmouseup   = function(ev) { gGLSLHelp.mIsMoving = false; };
+        gGLSLHelp.mVisible = false;
+    }
+        document.onmousemove = function( ev )
+        {
+            if( gGLSLHelp!=null && gGLSLHelp.mIsMoving )
+            {
+                gGLSLHelp.mEle.style.left = (ev.screenX-gGLSLHelp.mStartPosX) + "px";
+                gGLSLHelp.mEle.style.top  = (ev.screenY-gGLSLHelp.mStartPosY) + "px";
+            }
+        }
+
+
+    if( gGLSLHelp.mVisible )
+    {
+        gGLSLHelp.mVisible = false;
+	    gGLSLHelp.mEle.style.opacity = "0.0";
+        gGLSLHelp.mEle.style.visibility = "hidden";
+    }
+    else
+    {
+        gGLSLHelp.mVisible = true;
+	    gGLSLHelp.mEle.style.opacity = "1.0";
+        gGLSLHelp.mEle.style.visibility = "visible";
+    }
+}
+
+
+
+</script>
+
+<div id="dlgHelp" class="dialog" style="left:30%;top:30%">
+
+<div id="dlgHelpHeader" class="dialogHeader" >
+  <div class="dialogTitle">GLSL Help</div>
+  <div class="dialogCloseButton" onclick='showHelp()'></div>
+</div>
+
+<div class="dialogContent">
+<div class="dialogContentBody">
+
+    This help only covers the parts of GLSL ES that are relevant for Shadertoy. For the complete specification please have a look at
+    <a class="user"  href="http://www.khronos.org/registry/gles/specs/2.0/GLSL_ES_Specification_1.0.17.pdf">GLSL ES specification</a>
+    <br>
+    <h2>Language:</h2>
+    <hr>
+    <ul>
+    <li><b>Preprocessor:</b> # #define #undef #if #ifdef #ifndef #else #elif #endif #error #pragma #extension #version #line</li>
+    <li><b>Operators:</b> () + - ! * / %  &lt;  &gt;  &lt;= &gt;= == != &&  ||</li>
+    <li><b>Comments:</b> // /* */</li>
+    <li><b>Types:</b> void bool int float vec2 vec3 vec4 bvec2 bvec3 bvec4 ivec2 ivec3 ivec4 mat2 mat3 mat4 sampler2D</li>
+    <li><b>Function Parameter Qualifiers:</b> [none], in, out, inout</li>
+    <li><b>Global Variable Qualifiers:</b> const</li>
+    <li><b>Vector Components:</b> .xyzw .rgba .stpq</li>
+    <li><b>Flow Control:</b> if else for return break continue</li>
+    <li><b>Output:</b> vec4 fragColor</li>
+    <li><b>Input:</b> vec2 fragCoord</li>
+    </ul>
+
+    <br>
+    <h2>Built-in Functions:</h2>
+    <hr>
+    <table>
+    <tr>
+    <td>
+      <ul>
+      <li>type radians (type degrees)</li>
+      <li>type degrees (type radians)</li>
+      <li>type sin (type angle)</li>
+      <li>type cos (type angle)</li>
+      <li>type tan (type angle)</li>
+      <li>type asin (type x)</li>
+      <li>type acos (type x)</li>
+      <li>type atan (type y, type x)</li>
+      <li>type atan (type y_over_x)</li>
+      </ul>
+    </td>
+    <td>
+      <ul>
+      <li>type pow (type x, type y)</li>
+      <li>type exp (type x)</li>
+      <li>type log (type x)</li>
+      <li>type exp2 (type x)</li>
+      <li>type log2 (type x)</li>
+      <li>type sqrt (type x)</li>
+      <li>type inversesqrt (type x)</li>
+      </ul>
+    </td>
+    </tr>
+    <tr>
+    <td>
+      <ul>
+      <li>type abs (type x)</li>
+      <li>type sign (type x)</li>
+      <li>type floor (type x)</li>
+      <li>type ceil (type x)</li>
+      <li>type fract (type x)</li>
+      <li>type mod (type x, float y)</li>
+      <li>type mod (type x, type y)</li>
+      <li>type min (type x, type y)</li>
+      <li>type min (type x, float y)</li>
+      <li>type max (type x, type y)</li>
+      <li>type max (type x, float y)</li>
+      <li>type clamp (type x, type minV, type maxV)</li>
+      <li>type clamp (type x, float minV, float maxV)</li>
+      <li>type mix (type x, type y, type a)</li>
+      <li>type mix (type x, type y, float a)</li>
+      <li>type step (type edge, type x)</li>
+      <li>type step (float edge, type x)</li>
+      <li>type smoothstep (type a, type b, type x)</li>
+      <li>type smoothstep (float a, float b, type x)</li>
+      <li>mat matrixCompMult (mat x, mat y)</li>
+      </ul>
+    </td>
+    <td>
+      <ul>
+      <li>float length (type x)</li>
+      <li>float distance (type p0, type p1)</li>
+      <li>float dot (type x, type y)</li>
+      <li>vec3 cross (vec3 x, vec3 y)</li>
+      <li>type normalize (type x)</li>
+      <li>type faceforward (type N, type I, type Nref)</li>
+      <li>type reflect (type I, type N)</li>
+      <li>type refract (type I, type N,float eta)</li>
+      </ul>
+    </td>
+    </tr>
+    <tr>
+    <td>
+      <ul>
+      <li>bvec lessThan(vec x, vec y)</li>
+      <li>bvec lessThan(ivec x, ivec y)</li>
+      <li>bvec lessThanEqual(vec x, vec y)</li>
+      <li>bvec lessThanEqual(ivec x, ivec y)</li>
+      <li>bvec greaterThan(vec x, vec y)</li>
+      <li>bvec greaterThan(ivec x, ivec y)</li>
+      <li>bvec greaterThanEqual(vec x, vec y)</li>
+      <li>bvec greaterThanEqual(ivec x, ivec y)</li>
+      <li>bvec equal(vec x, vec y)</li>
+      <li>bvec equal(ivec x, ivec y)</li>
+      <li>bvec equal(bvec x, bvec y)</li>
+      <li>bvec notEqual(vec x, vec y)</li>
+      <li>bvec notEqual(ivec x, ivec y)</li>
+      <li>bvec notEqual(bvec x, bvec y)</li>
+      <li>bool any(bvec x)</li>
+      <li>bool all(bvec x)</li>
+      <li>bvec not(bvec x)</li>
+      </ul>
+    </td>
+    <td>
+      <ul>
+      <li>vec4 texture2D(sampler2D sampler, vec2 coord )</li>
+      <li>vec4 texture2D(sampler2D sampler, vec2 coord, float bias)</li>
+      <li>vec4 textureCube(samplerCube sampler, vec3 coord)</li>
+      <li>vec4 texture2DProj(sampler2D sampler, vec3 coord )</li>
+      <li>vec4 texture2DProj(sampler2D sampler, vec3 coord, float bias)</li>
+      <li>vec4 texture2DProj(sampler2D sampler, vec4 coord)</li>
+      <li>vec4 texture2DProj(sampler2D sampler, vec4 coord, float bias)</li>
+      </ul>
+      <ul>
+      <li>type dFdx( type x ), dFdy( type x )</li>
+      <li>type fwidth( type p )</li>
+      </ul>
+    </td>
+    </tr>
+    </table>
+    <br>
+    <h2>How-to</h2>
+    <hr>
+    <ul>
+    <li><b>Use structs:</b> struct myDataType { float occlusion; vec3 color; }; myDataType myData = myDataType(0.7, vec3(1.0, 2.0, 3.0));</li>
+    <li><b>Initialize arrays:</b> arrays cannot be initialized in WebGL.</li>
+    <li><b>Do conversions:</b> int a = 3; float b = float(a);</li>
+    <li><b>Do component swizzling:</b> vec4 a = vec4(1.0,2.0,3.0,4.0); vec4 b = a.zyyw;</li>
+    <li><b>Access matrix components:</b> mat4 m; m[1] = vec4(2.0); m[0][0] = 1.0; m[2][3] = 2.0;</li>
+    </ul>
+    <br>
+    <h2>Be careful!</h2>
+    <hr>
+    <ul>
+    <li><b>the <i>f</i> suffix for floating pont numbers:</b> 1.0f is illegal in GLSL. You must use 1.0</li>
+    <li><b>saturate():</b> saturate(x) doesn't exist in GLSL. Use clamp(x,0.0,1.0) instead</li>
+    <li><b>pow/sqrt:</b> please don't feed sqrt() and pow() with negative numbers. Add an abs() or max(0.0,) to the argument</li>
+    <li><b>variables:</b> initialize your variables! Don't assume they'll be set to zero by default</li>
+    <li><b>functions:</b> don't call your functions the same as some of your variables</li>
+    </ul>
+    <br>
+    <h2>Shadertoy Inputs</h2>
+    <hr>
+    <table>
+    <tr><td><b>vec3</b></td><td><b>iResolution</b></td><td>image</td><td>The viewport resolution (z is pixel aspect ratio, usually 1.0)</td></tr>
+    <tr><td><b>float</b></td><td><b>iGlobalTime</b></td><td>image/sound</td><td>Current time in seconds</td></tr>
+    <tr><td><b>float</b></td><td><b>iChannelTime[4]</b></td><td>image</td><td>Time for channel (if video or sound), in seconds</td></tr>
+    <tr><td><b>vec3</b></td><td><b>iChannelResolution[4]</b></td><td>image/sound</td><td>Input texture resolution for each channel</td></tr>
+    <tr><td><b>vec4</b></td><td><b>iMouse</b></td><td>image</td><td>xy = current pixel coords (if LMB is down). zw = click pixel</td></tr>
+    <tr><td><b>sampler2D</b></td><td><b>iChannel{i}</b></td><td>image/sound</td><td>Sampler for input textures i</td></tr>
+    <tr><td><b>vec4</b></td><td><b>iDate</b></td><td>image/sound</td><td>Year, month, day, time in seconds in .xyzw</td></tr>
+    <tr><td><b>float</b></td><td><b>iSampleRate</b></td><td>image/sound</td><td>The sound sample rate (typically 44100)</td></tr>
+    </table>
+    <br>
+    <h2>Shadertoy Outputs</h2>
+    <hr>
+    For image shaders, fragColor is used as output channel. It is not, for now, mandatory but recommended to leave the alpha channel to 1.0.<br>
+    <br>
+    For sound shaders, the mainSound() function returns a vec2 containing the left and right (stereo) sound channel wave data.
+    <br>
+    <br>
+    <br>
+
+</div>
+</div>
+</div>
+<!-- BBCodeHelp ================================================================================ -->
+
+<script type="text/javascript">
+
+var gBBCodeHelp = null;
+
+function showBBCodeHelp()
+{
+    if( gBBCodeHelp==null )
+    {
+        gBBCodeHelp = {};
+        gBBCodeHelp.mEle = document.getElementById("dlgBBCodeHelp");
+        gBBCodeHelp.mHeader = document.getElementById("dlgBBCodeHelpHeader");
+        gBBCodeHelp.mIsMoving = false;
+        gBBCodeHelp.mStartPosX = 0;
+        gBBCodeHelp.mStartPosY = 0;
+        gBBCodeHelp.mHeader.onmousedown = function(ev) { gBBCodeHelp.mIsMoving = true; gBBCodeHelp.mStartPosX = ev.screenX - gBBCodeHelp.mEle.offsetLeft; gBBCodeHelp.mStartPosY = ev.screenY - gBBCodeHelp.mEle.offsetTop; };
+        gBBCodeHelp.mHeader.onmouseup   = function(ev) { gBBCodeHelp.mIsMoving = false; };
+        gBBCodeHelp.mVisible = false;
+    }
+        document.onmousemove = function( ev )
+        {
+            if( gBBCodeHelp!=null && gBBCodeHelp.mIsMoving )
+            {
+                gBBCodeHelp.mEle.style.left = (ev.screenX-gBBCodeHelp.mStartPosX) + "px";
+                gBBCodeHelp.mEle.style.top  = (ev.screenY-gBBCodeHelp.mStartPosY) + "px";
+            }
+        }
+
+
+    if( gBBCodeHelp.mVisible )
+    {
+        gBBCodeHelp.mVisible = false;
+	    gBBCodeHelp.mEle.style.opacity = "0.0";
+        gBBCodeHelp.mEle.style.visibility = "hidden";
+    }
+    else
+    {
+        gBBCodeHelp.mVisible = true;
+	    gBBCodeHelp.mEle.style.opacity = "1.0";
+        gBBCodeHelp.mEle.style.visibility = "visible";
+    }
+}
+
+
+
+</script>
+
+<div id="dlgBBCodeHelp" class="dialog" style="left:30%;top:30%">
+
+<div id="dlgBBCodeHelpHeader" class="dialogHeader" >
+  <div class="dialogTitle">BBCode Help</div>
+  <div class="dialogCloseButton" onclick='showBBCodeHelp()'></div>
+</div>
+
+<div class="dialogContent">
+<div class="dialogContentBody">
+    <h2>Codes:</h2>
+    <hr>
+    You can format your comments by using standard <a href="http://en.wikipedia.org/wiki/BBCode" class="regular">BBCode</a>. The following tags are implemented in Shadertoy:
+    <br>
+    <br>
+    <table>
+    <tr><td>Bold</td><td width="8px"></td><td><b>[b]</b>this text goes in bold<b>[/b]</b></td></tr>
+    <tr><td>Italic</td><td width="8px"></td><td><b>[i]</b>this text goes in italic<b>[/i]</b></td></tr>
+    <tr><td>Images</td><td width="8px"></td><td><b>[img]</b>url_to_image<b>[/img]</b></td></tr>
+    <tr><td>Url</td><td width="8px"></td><td><b>[url]</b>http://www.shadertoy.com<b>[/url]</b></td></tr>
+    <tr><td>Url</td><td width="8px"></td><td><b>[url=</b>http://www.shadertoy.com<b>]</b>Shadertoy<b>[/url]</b></td></tr>
+    <tr><td>Code</td><td width="8px"></td><td><b>[code]</b>fixed-width text<b>[/code]</b></td></tr>
+    <tr><td>Video</td><td width="8px"></td><td><b>[video]</b>http://www.youtube.com/watch?v=32yZm2TLHgY<b>[/video]</b></td></tr>
+    </table>
+    <br>
+    <h2>Emoticons:</h2>
+    <hr>
+    <table>
+    <tr><td>:)</td><td width="8px"></td><td><img src="/img/emoticonHappy.png"/></td></tr>
+    <tr><td>:(</td><td width="8px"></td><td><img src="/img/emoticonSad.png"/></td></tr>
+    <tr><td>:D</td><td width="8px"></td><td><img src="/img/emoticonLaugh.png"/></td></tr>
+    <tr><td>:love:</td><td width="8px"></td><td><img src="/img/emoticonLove.png"/></td></tr>
+    <tr><td>:octopus:</td><td width="8px"></td><td><img src="/img/emoticonOctopus.png"/></td></tr>
+    <tr><td>:octopusballoon:</td><td width="8px"></td><td><img src="/img/emoticonOctopusBalloon.png"/></td></tr>
+    </table>
+    <br>
+    <h2>Symbols:</h2>
+    <hr>
+    <table>
+    <tr><td>:alpha:</td><td width="8px"></td><td>&#945;</td></tr>
+    <tr><td>:beta:</td><td width="8px"></td><td>&#946;</td></tr>
+    <tr><td>:delta:</td><td width="8px"></td><td>&#916;</td></tr>
+    <tr><td>:epsilon:</td><td width="8px"></td><td>&#949;</td></tr>
+    <tr><td>:nabla:</td><td width="8px"></td><td>&#8711;</td></tr>
+    <tr><td>:square:</td><td width="8px"></td><td>&#178;</td></tr>
+    <tr><td>:cube:</td><td width="8px"></td><td>&#179;</td></tr>
+    <tr><td>:limit:</td><td width="8px"></td><td>&#8784;</td></tr>
+
+    </table>
+    <br>
+</div>
+</div>
+</div>
+<!-- shareShader =============================================================================== -->
+<script type="text/javascript">
+
+var gDlgShare = null;
+
+function doShareShader( coords )
+{
+    if( gDlgShare==null )
+    {
+        gDlgShare = {};
+        gDlgShare.mEle = document.getElementById("dlgShareShader");
+        gDlgShare.mIsMoving = false;
+        gDlgShare.mStartPosX = 0;
+        gDlgShare.mStartPosY = 0;
+
+        var eleHeader =  document.getElementById( "dlgShareShaderHeader" );
+        eleHeader.onmousedown = function(ev) { gDlgShare.mIsMoving = true; gDlgShare.mStartPosX = ev.screenX - gDlgShare.mEle.offsetLeft; gDlgShare.mStartPosY = ev.screenY - gDlgShare.mEle.offsetTop; };
+        eleHeader.onmouseup   = function(ev) { gDlgShare.mIsMoving = false; };
+
+        gDlgShare.mEle.style.left = coords.mX + 32 + "px";
+        gDlgShare.mEle.style.top  = coords.mY - 100 + "px";
+        gDlgShare.mVisible = false;
+
+        var ele = document.getElementById("shaderURL");
+        var str = "https://www.shadertoy.com/view/" + gShaderID;
+        ele.innerHTML = str;
+        ele.href = str;
+    }
+
+    document.onmousemove = function( ev )
+    {
+
+        if( gDlgShare!=null && gDlgShare.mIsMoving )
+        {
+            gDlgShare.mEle.style.left = (ev.screenX-gDlgShare.mStartPosX) + "px";
+            gDlgShare.mEle.style.top  = (ev.screenY-gDlgShare.mStartPosY) + "px";
+        }
+    }
+
+    if( gDlgShare.mVisible )
+    {
+        gDlgShare.mVisible = false;
+	    gDlgShare.mEle.style.opacity = "0.0";
+        gDlgShare.mEle.style.visibility = "hidden";
+    }
+    else
+    {
+        gDlgShare.mVisible = true;
+	    gDlgShare.mEle.style.opacity = "1.0";
+        gDlgShare.mEle.style.visibility = "visible";
+    }
+
+}
+
+
+</script>
+
+<div id="dlgShareShader" class="dialog">
+
+<div class="dialogHeader" id="dlgShareShaderHeader" >
+  <div class="dialogTitle">Share your shader</div>
+  <div class="dialogCloseButton" onclick='doShareShader(null)'></div>
+</div>
+
+<div class="dialogContent">
+<div class="dialogContentBody">
+
+
+  <b>Direct link:</b><br>
+  <br>
+  Just copy and paste this URL below: <a class="regular" id="shaderURL"></a><br>
+  <br>
+  <b>Embed:</b><br>
+  <br>
+  <textarea readonly rows="4" cols="52"><iframe width="640" height="360" frameborder="0" src="https://www.shadertoy.com/embed/Ms2SD1?gui=true&t=10&paused=true" allowfullscreen></iframe></textarea>
+</div>
+</div>
+</div>
+<!-- alert =============================================================================== -->
+<script type="text/javascript">
+
+var gDlgAlert = null;
+
+function doAlert( coords, size, title, str, hasButtons, doThing )
+{
+    if( gDlgAlert==null )
+    {
+        gDlgAlert = {};
+        gDlgAlert.mEle = document.getElementById("dlgAlertShader");
+        gDlgAlert.mIsMoving = false;
+        gDlgAlert.mStartPosX = 0;
+        gDlgAlert.mStartPosY = 0;
+        gDlgAlert.mHasButtons = hasButtons;
+        gDlgAlert.mDoThing = doThing;
+
+        if( !hasButtons )
+        {
+            var ele = document.getElementById("dialogContentButtons");
+            ele.style.visibility = "hidden";
+        }
+        else
+        {
+            var ele = document.getElementById("dialogContentButtons");
+            ele.style.visibility = "visible";
+        }
+
+
+        if( size != null )
+        {
+        gDlgAlert.mEle.style.width  = size.mX + "px";
+        //gDlgAlert.mEle.style.height = size.mY + "px";
+        }
+
+        var eleHeader =  document.getElementById( "dlgAlertShaderHeader" );
+        eleHeader.onmousedown = function(ev) { gDlgAlert.mIsMoving = true; gDlgAlert.mStartPosX = ev.screenX - gDlgAlert.mEle.offsetLeft; gDlgAlert.mStartPosY = ev.screenY - gDlgAlert.mEle.offsetTop; };
+        eleHeader.onmouseup   = function(ev) { gDlgAlert.mIsMoving = false; };
+
+        gDlgAlert.mEle.style.left = coords.mX - gDlgAlert.mEle.offsetWidth/2 + "px";
+        gDlgAlert.mEle.style.top  = coords.mY - gDlgAlert.mEle.offsetHeight/2 + 32 + "px";
+        gDlgAlert.mVisible = false;
+    }
+
+    var ele = document.getElementById("dlgAlertTXT");
+    ele.innerHTML = str;
+
+    ele = document.getElementById("dlgAlertTitle" );
+    ele.innerHTML = title;
+
+    document.onmousemove = function( ev )
+    {
+
+        if( gDlgAlert!=null && gDlgAlert.mIsMoving )
+        {
+            gDlgAlert.mEle.style.left = (ev.screenX-gDlgAlert.mStartPosX) + "px";
+            gDlgAlert.mEle.style.top  = (ev.screenY-gDlgAlert.mStartPosY) + "px";
+        }
+    }
+
+    if( gDlgAlert.mVisible )
+    {
+        gDlgAlert.mVisible = false;
+	    gDlgAlert.mEle.style.opacity = "0.0";
+        gDlgAlert.mEle.style.visibility = "hidden";
+    }
+    else
+    {
+        gDlgAlert.mVisible = true;
+	    gDlgAlert.mEle.style.opacity = "1.0";
+        gDlgAlert.mEle.style.visibility = "visible";
+    }
+}
+
+function doAlertClose()
+{
+    gDlgAlert.mVisible = false;
+    gDlgAlert.mEle.style.opacity = "0.0";
+    gDlgAlert.mEle.style.visibility = "hidden";
+}
+
+function doAlertConfirmClose()
+{
+    gDlgAlert.mVisible = false;
+    gDlgAlert.mEle.style.opacity = "0.0";
+    gDlgAlert.mEle.style.visibility = "hidden";
+    gDlgAlert.mDoThing();
+
+}
+
+
+</script>
+
+<div id="dlgAlertShader" class="dialog">
+
+  <div class="dialogHeader" id="dlgAlertShaderHeader" >
+    <div id="dlgAlertTitle" class="dialogTitle">Share your shader</div>
+    <div class="dialogCloseButton" onclick='doAlertClose()'></div>
+  </div>
+
+  <div class="dialogContent">
+  <div class="dialogContentBody">
+    <div id="dlgAlertTXT" style="width:90%;word-wrap:break-word;"></div>
+    <div class="dialogContentButtons" id="dialogContentButtons">
+     <div class="dialogButton" onclick='doAlertConfirmClose()'>Yes</div>
+     <div class="dialogButton" onclick='doAlertClose()'>No</div>
+    </div>
+  </div>
+  </div>
+</div>
+<!-- ========================================================================================= -->
+
+</div>
+
+<!-- footer ================================================================================== -->
+
+<div id="footer">
+<div id="footerContent">
+
+   <div style="bottom:0px;left:0px;position:absolute">
+    <a class="option" href="/howto">How To</a>
+    <a class="option" href="/api">API</a>
+    <a class="option" href="/terms">Terms & Privacy</a>
+    <a class="option" href="mailto:info@shadertoy.com?Subject=Hello%20Shadertoy">Feedback</a>
+    <a class="option" href="/events">Events</a>
+    <a class="option" href="/changelog">Changelog</a>
+	<a class="option" href="https://trello.com/b/5hM0CjId">Roadmap</a>
+    <a class="option" href="/about">About</a>
+    <a href="http://www.facebook.com/shadertoy"><img style="left:8px;top:2px;position:relative" src="/img/facebook-logo.png" height="20"/></a>
+    <a href="http://www.twitter.com/shadertoy"><img style="left:8px;top:2px;position:relative" src="/img/twitter-logo.png" height="20"/></a>
+   </div>
+   <div style="right:0px;position:absolute;top:2px">
+    by <a href="http://www.beautypi.com" class="regular">Beautypi</a>
+   </div>
+</div>
+</div>
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-44068895-1', 'shadertoy.com');
+  ga('send', 'pageview');
+</script>
+<div id="centerScreen"></div>
+
+</body>
+
+</html>
